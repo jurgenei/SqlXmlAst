@@ -2,7 +2,7 @@
 
 # grammars-v4
 
-Grammars written for [ANTLR v4](https://github.com/jurgenei/SqlXmlAst)
+Grammars written for SqlXmlAst](https://github.com/jurgenei/SqlXmlAst)
 
 This repository is a collection of Antlr4 grammars.   
 
@@ -10,5 +10,5 @@ The root directory name is the all-lowercase name of the language parsed by the 
 
 # FAQ
 
-Please refer to the [grammars-v4 Wiki](https://github.com/jurgenei/SqlXmlAst/wiki)
+Please refer to the [SqlXmlAst Wiki](https://github.com/jurgenei/SqlXmlAst/wiki)
 "# SqlXmlAst" 
