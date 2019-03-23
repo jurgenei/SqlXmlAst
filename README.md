@@ -2,7 +2,7 @@
 
 # grammars-v4
 
-Grammars written for SqlXmlAst](https://github.com/jurgenei/SqlXmlAst)
+Grammars written for [SqlXmlAst](https://github.com/jurgenei/SqlXmlAst)
 
 This repository is a collection of Antlr4 grammars.   
 
