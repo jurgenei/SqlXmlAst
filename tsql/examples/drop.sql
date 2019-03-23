@@ -7,8 +7,8 @@ DROP BROKER PRIORITY InitiatorAToTargetPriority
 DROP CERTIFICATE certificate_name
 DROP COLUMN ENCRYPTION KEY MyCEK;
 DROP COLUMN MASTER KEY MyCMK;
-DROP CONTRACT
-    [//Adventure-Works.com/Expenses/ExpenseSubmission] ;
+--DROP CONTRACT
+--    [//Adventure-Works.com/Expenses/ExpenseSubmission] ;
 DROP CREDENTIAL Saddles;
 DROP CRYPTOGRAPHIC PROVIDER provider_name
 DROP CRYPTOGRAPHIC PROVIDER SecurityProvider;  
@@ -43,7 +43,7 @@ DROP FUNCTION Sales.fn_SalesByStore;
 DROP LOGIN WilliJo;
 GO
 DROP MASTER KEY;
-DROP MESSAGE TYPE [//Adventure-Works.com/Expenses/SubmitExpense] ;
+--DROP MESSAGE TYPE [//Adventure-Works.com/Expenses/SubmitExpense] ;
 DROP PARTITION FUNCTION myRangePF;
 DROP PARTITION SCHEME myRangePS1;
 DROP PROCEDURE dbo.uspMyProc;
@@ -66,7 +66,7 @@ DROP SERVER AUDIT HIPAA_Audit;
 DROP SERVER AUDIT SPECIFICATION HIPAA_Audit_Specification;
 DROP SERVER ROLE purchasing;
 GO
-DROP SERVICE [//Adventure-Works.com/Expenses] ;
+--DROP SERVICE [//Adventure-Works.com/Expenses] ;
 DROP SIGNATURE FROM HumanResources.uspUpdateEmployeeLogin
     BY CERTIFICATE HumanResourcesDP;
 DROP STATISTICS Purchasing.Vendor.VendorCredit, Sales.SalesOrderHeader.CustomerTotal;
