@@ -19,7 +19,7 @@
  */
 
 lexer grammar PlSqlLexer;
-//
+// JH: case independent lexer
 fragment A: [aA];
 fragment B: [bB];
 fragment C: [cC];
@@ -46,7 +46,7 @@ fragment W: [wW];
 fragment X: [xX];
 fragment Y: [yY];
 fragment Z: [zZ];
-
+// JH: case independent lexemes
 ABORT:                        A B O R T ;
 ABS:                          A B S ;
 ACCESS:                       A C C E S S ;
@@ -2370,9 +2370,10 @@ SPACES: [ \t\r\n]+ -> skip;
     
 // Rule #504 <SIMPLE_LETTER> - simple_latin _letter was generalised into SIMPLE_LETTER
 //  Unicode is yet to be implemented - see NSF0
+// JH extended with lowe case
 fragment
 SIMPLE_LETTER
-    : [A-Z]
+    : [A-Za-z]
     ;
 
 fragment
