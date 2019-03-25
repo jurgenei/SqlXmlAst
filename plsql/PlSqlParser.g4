@@ -4586,7 +4586,8 @@ regular_id
     ;
 
 non_reserved_keywords_in_12c
-    : ACL
+    : DOLLAR2_ID // added jurgen
+    | ACL
     | ACTION
     | ACTIONS
     | ACTIVE

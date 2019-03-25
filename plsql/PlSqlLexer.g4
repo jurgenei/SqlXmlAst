@@ -2412,5 +2412,6 @@ SPACE: [ \t];
 //  Within testLiterals all reserved and non-reserved words are being resolved
 
 REGULAR_ID: SIMPLE_LETTER (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*;
+DOLLAR2_ID: '$' '$' SIMPLE_LETTER (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*; // added jurgen
 
 ZV: '@!' -> channel(HIDDEN);
