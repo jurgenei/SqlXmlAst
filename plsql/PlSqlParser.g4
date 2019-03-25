@@ -3991,7 +3991,7 @@ sql_plus_command
     : '/'
     | EXIT
     | PROMPT
-    | SHOW (ERR | ERRORS)
+    | SHOW (ERR | ERROR | ERRORS)
     | START_CMD
     | whenever_command
     | set_command
@@ -4582,6 +4582,7 @@ regular_id
     | REGR_
     | VAR_
     | COVAR_
+    | PERIOD_KEYWORD // added jurgen
     ;
 
 non_reserved_keywords_in_12c
