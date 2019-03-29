@@ -204,7 +204,7 @@ procedure_body
     ;
 
 create_procedure_body
-    : CREATE (OR REPLACE)? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')? 
+    : CREATE (OR REPLACE)? (EDITIONABLE)? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')?
       invoker_rights_clause? (IS | AS)
       (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL) ';'
     ;
@@ -2948,7 +2948,7 @@ varray_type_def
 // Statements
 
 seq_of_statements
-    : (statement (';' | EOF) | label_declaration)+
+    : (statement (';' | EOF) | label_declaration | dlr_if_statement)+
     ;
 
 label_declaration
@@ -3007,6 +3007,19 @@ elsif_part
 else_part
     : ELSE seq_of_statements
     ;
+
+//$IF $$debug_on = 1 $THEN
+//
+//    dbms_output.put_line(' Call vic_01_retrieve_check : ' || SQL%rowcount);
+// $END
+
+dlr_if_statement
+    : DLR_IF condition DLR_THEN seq_of_statements dlr_else_part? DLR_END
+    ;
+
+dlr_else_part
+   : DLR_ELSE seq_of_statements
+   ;
 
 loop_statement
     : label_declaration? (WHILE condition | FOR cursor_loop_param)? LOOP seq_of_statements END LOOP label_name?

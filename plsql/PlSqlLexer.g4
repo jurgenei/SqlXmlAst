@@ -2251,6 +2251,11 @@ LEAST:                        L E A S T ;
 GREATEST:                     G R E A T E S T ;
 TO_DATE:                      T O '_' D A T E ;
 
+// jurgen added conditional compile
+DLR_IF:                       '$' I F ;
+DLR_THEN:                     '$' T H E N ;
+DLR_ELSE:                     '$' E L S E;
+DLR_END:                      '$' E N D;
 
 // Rule #358 <NATIONAL_CHAR_STRING_LIT> - subtoken typecast in <REGULAR_ID>, it also incorporates <character_representation>
 //  Lowercase 'n' is a usual addition to the standard
