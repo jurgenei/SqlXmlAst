@@ -19,8 +19,11 @@
  */
 
 parser grammar PlSqlParser;
-
+@header {
+    package com.ing.vortex.parsers.antlr;
+}
 options { tokenVocab=PlSqlLexer; }
+
 
 @members {boolean version12=true;}
 

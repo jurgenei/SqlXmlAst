@@ -37,7 +37,7 @@
 					<entryPoint>tsql_file</entryPoint>
 					<grammarName>TSql</grammarName>
 					<caseInsensitiveType>UPPER</caseInsensitiveType>
-					<packageName></packageName>
+					<packageName>com.ing.vortex.parsers.antlr</packageName>
 					<exampleFiles>examples/</exampleFiles>
 				</configuration>
 				<executions>

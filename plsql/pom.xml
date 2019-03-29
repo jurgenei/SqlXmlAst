@@ -42,8 +42,8 @@
 					<showTree>false</showTree>
 					<entryPoint>sql_script</entryPoint>
 					<grammarName>PlSql</grammarName>
-					<caseInsensitiveType>UPPER</caseInsensitiveType>
-					<packageName></packageName>
+					<caseInsensitiveType>None</caseInsensitiveType>
+					<packageName>com.ing.vortex.parsers.antlr</packageName>
 					<exampleFiles>examples/</exampleFiles>
 				</configuration>
 				<executions>
@@ -62,8 +62,8 @@
 							<showTree>false</showTree>
 							<entryPoint>sql_script</entryPoint>
 							<grammarName>PlSql</grammarName>
-							<caseInsensitiveType>UPPER</caseInsensitiveType>
-							<packageName></packageName>
+							<caseInsensitiveType>None</caseInsensitiveType>
+							<packageName>com.ing.vortex.parsers.antlr</packageName>
 							<exampleFiles>examples-sql-script/</exampleFiles>
 						</configuration>
 					</execution>

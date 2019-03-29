@@ -19,6 +19,7 @@
  */
 
 lexer grammar PlSqlLexer;
+@lexer::header {package com.ing.vortex.parsers.antlr;}
 // JH: case independent lexer
 fragment A: [aA];
 fragment B: [bB];
@@ -2291,7 +2292,7 @@ PERIOD:         '.';
     ;*/
 
 UNSIGNED_INTEGER:    [0-9]+;
-APPROXIMATE_NUM_LIT: FLOAT_FRAGMENT ('E' ('+'|'-')? (FLOAT_FRAGMENT | [0-9]+))? ('D' | 'F')?;
+APPROXIMATE_NUM_LIT: FLOAT_FRAGMENT ('E' ('+'|'-')? (FLOAT_FRAGMENT | [0-9]+))? ('D' | 'd' | 'F' | 'f')?;
 
 // Rule #--- <CHAR_STRING> is a base for Rule #065 <char_string_lit> , it incorporates <character_representation>
 // and a superfluous subtoken typecasting of the "QUOTE"

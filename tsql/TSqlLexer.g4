@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 lexer grammar TSqlLexer;
+@lexer::header {package com.ing.vortex.parsers.antlr;}
 //
 fragment A: [aA];
 fragment B: [bB];
