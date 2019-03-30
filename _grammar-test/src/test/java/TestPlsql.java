@@ -8,9 +8,11 @@ public class TestPlsql {
     private static File[] ok1 = new File("../plsql/examples").
             listFiles(pathname -> pathname.isFile());
 
+    private static String path = "src/main/antlr4/com/ing/vortex/parsers/antlr";
+
     private static File[] gfile = new File[]{
-            new File("../plsql/PlSqlParser.g4"),
-            new File("../plsql/PlSqlLexer.g4")
+            new File("../plsql/" + path + "/PlSqlParser.g4"),
+            new File("../plsql/" + path + "/PlSqlLexer.g4")
     };
 
     @Test

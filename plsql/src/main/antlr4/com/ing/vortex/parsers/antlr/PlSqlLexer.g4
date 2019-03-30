@@ -19,7 +19,7 @@
  */
 
 lexer grammar PlSqlLexer;
-@lexer::header {package com.ing.vortex.parsers.antlr;}
+//@lexer::header {package com.ing.vortex.parsers.antlr;}
 // JH: case independent lexer
 fragment A: [aA];
 fragment B: [bB];

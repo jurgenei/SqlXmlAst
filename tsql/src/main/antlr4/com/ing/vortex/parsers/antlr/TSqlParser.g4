@@ -27,9 +27,9 @@ THE SOFTWARE.
 */
 
 parser grammar TSqlParser;
-@header {
-    package com.ing.vortex.parsers.antlr;
-}
+//@header {
+//    package com.ing.vortex.parsers.antlr;
+//}
 options { tokenVocab=TSqlLexer; }
 
 
