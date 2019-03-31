@@ -38,7 +38,7 @@
 				<configuration>
 					<verbose>false</verbose>
 					<showTree>false</showTree>
-					<entryPoint>tsql_file</entryPoint>
+					<entryPoint>sql_script</entryPoint>
 					<grammarName>TSql</grammarName>
 					<caseInsensitiveType>UPPER</caseInsensitiveType>
 					<packageName>com.ing.vortex.parsers.antlr</packageName>

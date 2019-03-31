@@ -27,7 +27,7 @@ options { tokenVocab=PlSqlLexer; }
 
 @members {boolean version12=true;}
 
-sql_script
+sql_script // toplevel name
     : ((unit_statement | sql_plus_command) SEMICOLON?)* EOF
     ;
 

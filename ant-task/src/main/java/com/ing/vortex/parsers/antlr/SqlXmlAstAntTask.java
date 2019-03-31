@@ -1,0 +1,398 @@
+package com.ing.vortex.parsers.antlr;
+
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.PredictionMode;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.apache.commons.lang.time.StopWatch;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.types.Mapper;
+import org.apache.tools.ant.types.ResourceCollection;
+import org.apache.tools.ant.types.resources.Union;
+import org.apache.tools.ant.util.FileNameMapper;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+
+
+/**
+ * @author Jurgen Hildebrand
+ */
+public class SqlXmlAstAntTask extends MatchingTask {
+    /**
+     * destination directory
+     */
+    private File destDir = null;
+
+    /**
+     * where to find the source XML file, default is the project's basedir
+     */
+    private File baseDir = null;
+    SqlXmlConverter converter = new SqlXmlConverter();
+
+    public String getGrammar() {
+        return converter.getGrammar();
+    }
+
+    public void setGrammar(String grammar) throws Exception {
+        converter.setGrammar(grammar);
+    }
+
+    /**
+     * name for parse, sybase or oracle
+     */
+    private String grammar = "oracle";
+
+    /**
+     * extension of the files produced by XSL processing
+     */
+    private String targetExtension = ".xml";
+
+    /**
+     * name for XSL parameter containing the filename
+     */
+    private String fileNameParameter = null;
+
+    /**
+     * name for XSL parameter containing the file directory
+     */
+    private String fileDirParameter = null;
+
+    /**
+     * Input XML document to be used
+     */
+    private File inFile = null;
+
+    /**
+     * Output file
+     */
+    private File outFile = null;
+
+    private boolean failOnError = true;
+    private boolean failOnTransformationError = true;
+
+    private String predictionMode = "ll";
+
+    /**
+     * force output of target files even if they already exist
+     */
+    private boolean force = false;
+
+    private boolean useImplicitFileset = true;
+
+    private boolean performDirectoryScan = true;
+
+    private boolean failOnNoResources = true;
+
+    private final Union resources = new Union();
+
+    private Mapper mapperElement = null;
+
+    /**
+     * Defines the mapper to map source to destination files.
+     *
+     * @param mapper the mapper to use
+     * @throws BuildException if more than one mapper is defined
+     * @since Ant 1.6.2
+     */
+    public void addMapper(final Mapper mapper) {
+        if (mapperElement != null) {
+            handleError("Cannot define more than one mapper");
+        } else {
+            mapperElement = mapper;
+        }
+    }
+
+    /**
+     * Set the destination directory into which the XSL result
+     * files should be copied to;
+     * required, unless <tt>in</tt> and <tt>out</tt> are
+     * specified.
+     *
+     * @param dir the name of the destination directory
+     **/
+    public void setDestdir(final File dir) {
+        destDir = dir;
+    }
+
+    public void setScanIncludedDirectories(final boolean b) {
+        performDirectoryScan = b;
+    }
+
+    public void setFailOnNoResources(final boolean b) {
+        failOnNoResources = b;
+    }
+
+    public void setPredictionMode(final String b) {
+        predictionMode = b;
+    }
+
+    public void add(final ResourceCollection rc) {
+        resources.add(rc);
+    }
+
+    public void setUseImplicitFileset(final boolean useimplicitfileset) {
+        useImplicitFileset = useimplicitfileset;
+    }
+
+    /**
+     * Set whether to check dependencies, or always generate;
+     * optional, default is false.
+     *
+     * @param force true if always generate.
+     */
+
+
+    public void setForce(final boolean force) {
+        this.force = force;
+    }
+
+    /**
+     * Whether any errors should make the build fail.
+     */
+
+    public void setFailOnError(final boolean b) {
+        failOnError = b;
+    }
+
+    /**
+     * Whether transformation errors should make the build fail.
+     */
+
+    public void setFailOnTransformationError(final boolean b) {
+        failOnTransformationError = b;
+    }
+
+    /**
+     * Set the base directory;
+     * optional, default is the project's basedir.
+     *
+     * @param dir the base directory
+     **/
+
+    public void setBasedir(final File dir) {
+        baseDir = dir;
+    }
+
+    /**
+     * Set the desired file extension to be used for the target;
+     * optional, default is xml.
+     *
+     * @param name the extension to use
+     **/
+
+    public void setExtension(final String name) {
+        targetExtension = name;
+    }
+
+    protected void handleError(final String msg) {
+        if (failOnError) {
+            throw new BuildException(msg, getLocation());
+        }
+        log(msg, Project.MSG_WARN);
+    }
+
+
+    protected void handleError(final Throwable ex) {
+        if (failOnError) {
+            throw new BuildException(ex);
+        } else {
+            log("Caught an exception: " + ex, Project.MSG_WARN);
+        }
+    }
+
+
+
+
+    protected void handleTransformationError(final Exception ex) {
+        if (failOnError && failOnTransformationError) {
+            throw new BuildException(ex);
+        } else {
+            log("Caught an error during transformation: " + ex,
+                    Project.MSG_WARN);
+        }
+    }
+
+    private void checkDest() {
+        if (destDir == null) {
+            handleError("destdir attributes must be set!");
+        }
+    }
+
+    /**
+     * Mapper implementation of the "traditional" way &lt;xslt&gt;
+     * mapped filenames.
+     * <p>
+     * <p>If the file has an extension, chop it off.  Append whatever
+     * the user has specified as extension or ".html".</p>
+     */
+    private class StyleMapper implements FileNameMapper {
+        public void setFrom(final String from) {
+        }
+
+        public void setTo(final String to) {
+        }
+
+        public String[] mapFileName(String baseName) {
+            final int dotPos = baseName.lastIndexOf('.');
+            if (dotPos > 0) {
+                baseName = baseName.substring(0, dotPos);
+            }
+            return new String[]{baseName + targetExtension};
+        }
+    }
+
+
+    /**
+     * Processes the given input XML file and stores the result
+     * in the given resultFile.
+     *
+     * @param baseDir  the base directory for resolving files.
+     * @param baseName the input file
+     * @param destDir  the destination directory
+     * @throws BuildException if the processing fails.
+     */
+    private void process(final File baseDir, final String baseName, final File destDir)
+            throws BuildException {
+
+        File outF = null;
+        File inF = null;
+
+        try {
+
+            inF = new File(baseDir, baseName);
+
+            if (inF.isDirectory()) {
+                log("Skipping " + inF + " it is a directory.", Project.MSG_VERBOSE);
+                return;
+            }
+            FileNameMapper mapper = null;
+            if (mapperElement != null) {
+                mapper = mapperElement.getImplementation();
+            } else {
+                mapper = new StyleMapper();
+            }
+
+            final String[] outFileName = mapper.mapFileName(baseName);
+            if (outFileName == null || outFileName.length == 0) {
+                log("Skipping " + inFile + " it cannot get mapped to output.", Project.MSG_VERBOSE);
+                return;
+            } else if (outFileName == null || outFileName.length > 1) {
+                log("Skipping " + inFile + " its mapping is ambiguous.", Project.MSG_VERBOSE);
+                return;
+            }
+            outF = new File(destDir, outFileName[0]);
+
+            process(inF, outF, baseName);
+
+        } catch (final Exception ex) {
+            // If failed to process document, must delete target document,
+            // or it will not attempt to process it the second time
+            log("Failed to process " + inFile, Project.MSG_INFO);
+            if (outF != null) {
+                outF.delete();
+            }
+            handleTransformationError(ex);
+        }
+
+    } //-- processXML
+
+
+
+    private void process(final File inFile, final File outFile, final String path) throws BuildException {
+        if (force || inFile.lastModified() >= outFile.lastModified()) {
+            processFile(inFile, outFile, path);
+        } else {
+            log("SKIP " + inFile.getName(), Project.MSG_DEBUG);
+        }
+    }
+
+    private void processFile(final File inFile, final File outFile, final String path) throws BuildException {
+        final StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+        try {
+            log("BEGIN      " + inFile.getName(), Project.MSG_INFO);
+            converter.convert(inFile,outFile,path);
+            log("END        " + stopwatch, Project.MSG_INFO);
+        } catch (final Exception ex) {
+            log("FAILED     " + inFile, Project.MSG_ERR);
+            if (outFile != null) {
+                outFile.delete();
+            }
+            handleTransformationError(ex);
+        }
+    }
+
+    @Override
+    public void execute() throws BuildException {
+
+        final File savedBaseDir = baseDir;
+
+        DirectoryScanner scanner;
+        String[] list;
+        String[] dirs;
+
+        if (inFile != null && !inFile.exists()) {
+            handleError("input file " + inFile + " does not exist");
+            return;
+        }
+        try {
+
+            if (baseDir == null) {
+                baseDir = getProject().getBaseDir();
+            }
+
+
+            /*
+             * if we get here, in and out have not been specified, we are
+             * in batch processing mode.
+             */
+
+            //-- make sure destination directory exists...
+            checkDest();
+
+            if (useImplicitFileset) {
+                scanner = getDirectoryScanner(baseDir);
+                log("Transforming into " + destDir, Project.MSG_INFO);
+
+                // Process all the files marked for styling
+                list = scanner.getIncludedFiles();
+                for (int i = 0; i < list.length; ++i) {
+                    process(baseDir, list[i], destDir);
+                }
+                if (performDirectoryScan) {
+                    // Process all the directories marked for styling
+                    dirs = scanner.getIncludedDirectories();
+                    for (int j = 0; j < dirs.length; ++j) {
+                        list = new File(baseDir, dirs[j]).list();
+                        for (int i = 0; i < list.length; ++i) {
+                            process(baseDir, dirs[j] + File.separator + list[i], destDir);
+                        }
+                    }
+                }
+            } else { // only resource collections, there better be some
+                if (resources.size() == 0) {
+                    if (failOnNoResources) {
+                        handleError("no resources specified");
+                    }
+                    return;
+                }
+            }
+
+        } finally {
+            baseDir = savedBaseDir;
+        }
+    }
+}
+

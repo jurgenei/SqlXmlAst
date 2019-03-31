@@ -18,7 +18,7 @@ public class TestTsql {
     @Test
     public void test(){
         Assert.assertTrue(GrammarTester.run(GenericParser.CaseSensitiveType
-                .NONE,ok, "tsql_file", gfiles));
+                .NONE,ok, "sql_script", gfiles));
     }
 
 }
