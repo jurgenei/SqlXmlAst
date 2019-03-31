@@ -15,43 +15,6 @@ public interface XmlWriterInterface {
     abstract public void setRuleNames(List<String> stringList);
     abstract public List<String> getRuleNames();
 
-    default public void enterEveryRule(ParserRuleContext ctx) {
-        try {
-            getXmlStreamWriter().writeStartElement(extractRuleName(ctx));
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-    }
-
-    default public void exitEveryRule(ParserRuleContext ctx) {
-        try {
-            getXmlStreamWriter().writeEndElement();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-    }
-
-    default public void visitTerminal(TerminalNode node) {
-        try {
-            XMLStreamWriter s = getXmlStreamWriter();
-            s.writeStartElement("t");
-            s.writeCharacters(node.getText());
-            s.writeEndElement();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-    }
-
-    default public void visitErrorNode(ErrorNode node) {
-        try {
-            XMLStreamWriter s = getXmlStreamWriter();
-            s.writeStartElement("error");
-            s.writeCharacters(node.getText());
-            s.writeEndElement();
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
-    }
 
     default public String extractRuleName(ParserRuleContext ctx) {
         int ruleIndex = ctx.getRuleIndex();
