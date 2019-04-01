@@ -48,6 +48,7 @@ unit_statement
     | alter_materialized_view_log
     | alter_user
     | alter_view
+    | alter_session
 
     | analyze
     | associate_statistics
@@ -94,6 +95,10 @@ unit_statement
     ;
 
 // DDL -> SQL Statements for Stored PL/SQL Units
+
+alter_session
+   : ALTER SESSION update_set_clause ';'?
+   ;
 
 // Function DDLs
 

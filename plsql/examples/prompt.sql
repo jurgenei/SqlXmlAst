@@ -1,0 +1,2 @@
+PROMPT Creating View V_EXPORT_BASIC_CUSTOMER
+/

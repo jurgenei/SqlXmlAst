@@ -35,12 +35,16 @@ public class TSqlXmlConvertor implements SqlConverterInterace {
         xsw.writeAttribute("grammar","oracle");
         xsw.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xsw.writeAttribute("numlines", Integer.toString(countLines(inFile)));
-
-        walker.walk(writer, parser.sql_script());
-        xsw.writeEndElement();
-        xsw.writeEndDocument();
-        xsw.flush();
-        xsw.close();
+        try {
+             walker.walk(writer, parser.sql_script());
+        } catch (Exception e) {
+            throw (e);
+        } finally {
+            xsw.writeEndElement();
+            xsw.writeEndDocument();
+            xsw.flush();
+            xsw.close();
+        }
     }
 
 }

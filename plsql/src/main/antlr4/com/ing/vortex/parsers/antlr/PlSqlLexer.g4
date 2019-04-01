@@ -2396,7 +2396,7 @@ MULTI_LINE_COMMENT:  '/*' .*? '*/'                          -> channel(HIDDEN);
 // TODO should be grammar rule, but tricky to implement
 
 PROMPT
-    : 'prompt' SPACE ( ~('\r' | '\n') )* (NEWLINE|EOF)
+    : P R O M P T SPACE ( ~('\r' | '\n') )* (NEWLINE|EOF)
     ;
 
 START_CMD

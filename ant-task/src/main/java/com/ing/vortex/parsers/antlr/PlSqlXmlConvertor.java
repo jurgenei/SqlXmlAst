@@ -35,12 +35,15 @@ public class PlSqlXmlConvertor implements SqlConverterInterace {
         xsw.writeAttribute("grammar","oracle");
         xsw.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xsw.writeAttribute("numlines", Integer.toString(countLines(inFile)));
-        xsw.writeComment("start sql script");
-        walker.walk(writer, parser.sql_script());
-        xsw.writeComment("end sql script");
-        xsw.writeEndElement();
-        xsw.writeEndDocument();
-        xsw.flush();
-        xsw.close();
+        try {
+            walker.walk(writer, parser.sql_script());
+        } catch (Exception e) {
+            throw (e);
+        } finally {
+            xsw.writeEndElement();
+            xsw.writeEndDocument();
+            xsw.flush();
+            xsw.close();
+        };
     }
 }

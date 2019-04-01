@@ -311,7 +311,7 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
 
     private void process(final File inFile, final File outFile, final String path) throws BuildException {
-        if (force || inFile.lastModified() >= outFile.lastModified()) {
+        if (force || inFile.lastModified() >= outFile.lastModified() || outFile.length() == 0) {
             processFile(inFile, outFile, path);
         } else {
             log("SKIP " + inFile.getName(), Project.MSG_DEBUG);
