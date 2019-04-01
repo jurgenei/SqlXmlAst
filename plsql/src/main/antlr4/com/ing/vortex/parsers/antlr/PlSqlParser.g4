@@ -1258,9 +1258,10 @@ alter_view
 alter_view_editionable
     : {version12}? (EDITIONABLE | NONEDITIONABLE)
     ;
- 
+
+ // jurgen added EDITIONABLE 20190401
 create_view
-    : CREATE (OR REPLACE)? (OR? FORCE)? EDITIONING? VIEW
+    : CREATE (OR REPLACE)? (OR? FORCE)? (EDITIONING|EDITIONABLE)? VIEW
       tableview_name view_options?
       AS subquery subquery_restriction_clause?
     ;
