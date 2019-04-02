@@ -1767,7 +1767,7 @@ relational_table
       (CACHE | NOCACHE)? (RESULT_CACHE '(' MODE (DEFAULT | FORCE) ')')?
       parallel_clause? 
       (ROWDEPENDENCIES | NOROWDEPENDENCIES)? 
-      (enable_disable_clause+)? row_movement_clause? flashback_archive_clause? 
+      (enable_disable_clause+)? row_movement_clause? flashback_archive_clause? table_compression?
     ;
  
 relational_properties
