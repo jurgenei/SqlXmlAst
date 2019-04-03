@@ -4282,7 +4282,7 @@ datatype
     ;
 
 precision_part
-    : '(' numeric (',' numeric)? (CHAR | BYTE)? ')'
+    : '(' (numeric|'*') (',' numeric)? (CHAR | BYTE)? ')'
     ;
 
 native_datatype_element
