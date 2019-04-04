@@ -32,7 +32,8 @@ sql_script // toplevel name
     ;
 
 unit_statement
-    : transaction_control_statements 
+    : transaction_control_statements
+    | raise_statement
     | alter_cluster
     | alter_function
     | alter_package
