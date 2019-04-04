@@ -3260,10 +3260,10 @@ subquery_basic_elements
 subquery_operation_part
     : (UNION ALL? | INTERSECT | MINUS) subquery_basic_elements
     ;
-
+// jurgen added fetch clause
 query_block
     : SELECT (DISTINCT | UNIQUE | ALL)? ('*' | (','? selected_element)+)
-      into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause?
+      into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause? fetch_clause?
     ;
 
 selected_element
