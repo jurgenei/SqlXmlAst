@@ -3698,6 +3698,7 @@ relational_operator
     : '='
     | (NOT_EQUAL_OP | '<' '>' | '!' '=' | '^' '=')
     | ('<' | '>') '='?
+    | MULTISET? UNION // added jurgen 20190404
     ;
 
 in_elements
