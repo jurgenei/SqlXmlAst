@@ -2421,7 +2421,7 @@ alter_table
       | alter_table_properties
       | constraint_clauses
       | column_clauses
-//TODO      | alter_table_partitioning
+      | alter_table_partitioning
 //TODO      | alter_external_table
       | move_table_clause 
       )
@@ -2429,6 +2429,13 @@ alter_table
       ';'
     ;
 
+alter_table_partitioning
+    : MODIFY table_partitioning_clauses
+    ;
+
+partition_def
+    : PARTITION regular_id VALUES LESS THAN '(' expression ')' TABLESPACE regular_id
+    ;
 alter_table_properties
     : alter_table_properties_1
     | RENAME TO tableview_name
