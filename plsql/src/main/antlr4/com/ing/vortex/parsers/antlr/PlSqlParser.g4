@@ -2727,7 +2727,7 @@ column_definition
          SORT?  (DEFAULT expression)? (ENCRYPT (USING  CHAR_STRING)? (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?  (inline_constraint* | inline_ref_constraint ) identity_spec?
     ;
 identity_spec
-    : GENERATED (BY DEFAULT ON NULL|ALWAYS) AS IDENTITY (sequence_start_clause|sequence_spec)+
+    : GENERATED (BY DEFAULT (ON NULL)?|ALWAYS) AS IDENTITY (sequence_start_clause|sequence_spec)+
     ;
 
 
