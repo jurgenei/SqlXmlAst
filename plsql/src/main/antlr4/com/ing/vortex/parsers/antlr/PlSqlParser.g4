@@ -3712,9 +3712,9 @@ relational_operator
     | ('<' | '>') '='?
     | MULTISET? UNION // added jurgen 20190404
     ;
-
+// jurgen was subquerybe became select_statement 20190405
 in_elements
-    : '(' subquery ')'
+    : '(' select_statement ')'
     | '(' concatenation (',' concatenation)* ')'
     | constant
     | bind_variable
