@@ -2430,8 +2430,11 @@ alter_table
     ;
 
 alter_table_partitioning
-    : MODIFY table_partitioning_clauses
+    : MODIFY table_partitioning_clauses (UPDATE INDEXES '(' index_name_scope (',' index_name_scope)* ')')?
     ;
+index_name_scope
+   : index_name LOCAL?
+   ;
 
 partition_def
     : PARTITION regular_id VALUES LESS THAN '(' expression ')' TABLESPACE regular_id
