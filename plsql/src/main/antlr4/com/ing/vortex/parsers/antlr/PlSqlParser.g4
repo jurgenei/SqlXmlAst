@@ -2598,10 +2598,11 @@ modify_col_substitutable
     ;
 
 add_column_clause
-    : ADD '(' (','? column_definition
+    : ADD ('(' (','? column_definition
               |','? virtual_column_definition
               )+
-          ')'
+           ')' | column_definition
+           )
        column_properties?
 //TODO       (','? out_of_line_part_storage )
     ;
