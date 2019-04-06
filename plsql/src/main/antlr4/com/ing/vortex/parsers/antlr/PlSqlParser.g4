@@ -3567,10 +3567,15 @@ values_clause
     ;
 
 merge_statement
-    : MERGE INTO tableview_name table_alias? USING selected_tableview ON '(' condition ')'
+    : MERGE INTO merge_target USING selected_tableview ON '(' condition ')'
       (merge_update_clause merge_insert_clause? | merge_insert_clause merge_update_clause?)?
       error_logging_clause?
     ;
+
+merge_target
+   : tableview_name table_alias?
+   | '(' select_statement ')' table_alias?
+   ;
 
 // Merge Specific Clauses
 
