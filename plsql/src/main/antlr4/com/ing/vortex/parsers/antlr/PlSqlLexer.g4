@@ -2338,6 +2338,7 @@ NOT_EQUAL_OP:              '!='
             |              '^='
             |              '~='
             ;
+ARROW_OP:                  '=>';
 CARRET_OPERATOR_PART:      '^';
 TILDE_OPERATOR_PART:       '~';
 EXCLAMATION_OPERATOR_PART: '!';

@@ -2433,7 +2433,7 @@ alter_table_partitioning
     : MODIFY table_partitioning_clauses (UPDATE INDEXES '(' index_name_scope (',' index_name_scope)* ')')?
     ;
 index_name_scope
-   : index_name LOCAL?
+   : index_name (LOCAL|GLOBAL)?
    ;
 
 partition_def
@@ -4268,7 +4268,15 @@ keep_clause
     ;
 
 function_argument
-    : '(' (','? argument)* ')' keep_clause?
+    : '(' arguments ')' keep_clause?
+    ;
+arguments
+    :
+    | argument (','? argument)*
+    ;
+argument
+    : identifier ARROW_OP expression
+    | expression
     ;
 
 function_argument_analytic
@@ -4283,10 +4291,6 @@ function_argument_modeling
 
 respect_or_ignore_nulls
     : (RESPECT | IGNORE) NULLS
-    ;
-
-argument
-    : (identifier '=' '>')? expression
     ;
 
 type_spec
