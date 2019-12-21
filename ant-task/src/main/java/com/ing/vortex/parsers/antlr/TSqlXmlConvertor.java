@@ -32,7 +32,7 @@ public class TSqlXmlConvertor implements SqlConverterInterace {
         // convert
         xsw.writeStartDocument();
         xsw.writeStartElement("sql");
-        xsw.writeAttribute("grammar","oracle");
+        xsw.writeAttribute("grammar","sybase");
         xsw.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xsw.writeAttribute("numlines", Integer.toString(countLines(inFile)));
         // try {
