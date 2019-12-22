@@ -1,13 +1,7 @@
 package com.ing.vortex.parsers.antlr;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.LexerATNSimulator;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
-import org.antlr.v4.runtime.atn.PredictionMode;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import java.io.File;
+
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -17,13 +11,6 @@ import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 import org.apache.tools.ant.util.FileNameMapper;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -45,14 +32,11 @@ public class SqlXmlAstAntTask extends MatchingTask {
         return converter.getGrammar();
     }
 
-    public void setGrammar(String grammar) throws Exception {
+    public void setGrammar(final String grammar) throws Exception {
         converter.setGrammar(grammar);
     }
 
-    /**
-     * name for parse, sybase or oracle
-     */
-    private String grammar = "oracle";
+
 
     /**
      * extension of the files produced by XSL processing
@@ -60,29 +44,12 @@ public class SqlXmlAstAntTask extends MatchingTask {
     private String targetExtension = ".xml";
 
     /**
-     * name for XSL parameter containing the filename
-     */
-    private String fileNameParameter = null;
-
-    /**
-     * name for XSL parameter containing the file directory
-     */
-    private String fileDirParameter = null;
-
-    /**
      * Input XML document to be used
      */
-    private File inFile = null;
-
-    /**
-     * Output file
-     */
-    private File outFile = null;
+    private final File inFile = null;
 
     private boolean failOnError = true;
     private boolean failOnTransformationError = true;
-
-    private String predictionMode = "ll";
 
     /**
      * force output of target files even if they already exist
@@ -115,10 +82,8 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
     /**
-     * Set the destination directory into which the XSL result
-     * files should be copied to;
-     * required, unless <tt>in</tt> and <tt>out</tt> are
-     * specified.
+     * Set the destination directory into which the XSL result files should be
+     * copied to; required, unless <tt>in</tt> and <tt>out</tt> are specified.
      *
      * @param dir the name of the destination directory
      **/
@@ -135,7 +100,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
     public void setPredictionMode(final String b) {
-        predictionMode = b;
     }
 
     public void add(final ResourceCollection rc) {

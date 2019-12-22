@@ -1,12 +1,8 @@
 package com.ing.vortex.parsers.antlr;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.List;
+import javax.xml.stream.XMLStreamWriter;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public interface XmlWriterInterface {
 
