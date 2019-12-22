@@ -12,27 +12,53 @@ public class PlSqlWriter extends PlSqlParserBaseListener implements XmlWriterInt
     XMLStreamWriter xmlStreamWriter = null;
     List<String> ruleNames = null;
 
+    
+    /** 
+     * @param xmlStreamWriter
+     * @param ruleNames
+     * @return 
+     */
     PlSqlWriter(XMLStreamWriter xmlStreamWriter, List<String> ruleNames) {
         setXmlStreamWriter(xmlStreamWriter);
         setRuleNames(ruleNames);
     }
 
+    
+    /** 
+     * @param s
+     */
     public void setXmlStreamWriter(XMLStreamWriter s) {
         xmlStreamWriter = s;
     }
 
+    
+    /** 
+     * @return XMLStreamWriter
+     */
     public XMLStreamWriter getXmlStreamWriter() {
         return xmlStreamWriter;
     }
 
+    
+    /** 
+     * @param stringList
+     */
     public void setRuleNames(List<String> stringList) {
         ruleNames = stringList;
     }
 
+    
+    /** 
+     * @return List<String>
+     */
     public List<String> getRuleNames() {
         return ruleNames;
     }
 
+     
+     /** 
+      * @param ctx
+      */
      public void enterEveryRule(ParserRuleContext ctx) {
         try {
             getXmlStreamWriter().writeStartElement(extractRuleName(ctx));
@@ -41,6 +67,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener implements XmlWriterInt
         }
     }
 
+     
+     /** 
+      * @param ctx
+      */
      public void exitEveryRule(ParserRuleContext ctx) {
         try {
             getXmlStreamWriter().writeEndElement();
@@ -49,6 +79,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener implements XmlWriterInt
         }
     }
 
+     
+     /** 
+      * @param node
+      */
      public void visitTerminal(TerminalNode node) {
         try {
             XMLStreamWriter s = getXmlStreamWriter();
@@ -60,6 +94,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener implements XmlWriterInt
         }
     }
 
+     
+     /** 
+      * @param node
+      */
      public void visitErrorNode(ErrorNode node) {
         try {
             XMLStreamWriter s = getXmlStreamWriter();

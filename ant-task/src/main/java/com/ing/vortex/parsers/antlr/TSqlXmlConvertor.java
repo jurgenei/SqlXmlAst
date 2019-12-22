@@ -15,6 +15,13 @@ import java.util.List;
 
 public class TSqlXmlConvertor implements SqlConverterInterace {
 
+    
+    /** 
+     * @param inFile
+     * @param outFile
+     * @param path
+     * @throws Exception
+     */
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
         InputStream inputStream = new FileInputStream(inFile);
         CharStream s = CharStreams.fromStream(inputStream);
@@ -32,18 +39,18 @@ public class TSqlXmlConvertor implements SqlConverterInterace {
         // convert
         xsw.writeStartDocument();
         xsw.writeStartElement("sql");
-        xsw.writeAttribute("grammar","sybase");
+        xsw.writeAttribute("grammar", "sybase");
         xsw.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xsw.writeAttribute("numlines", Integer.toString(countLines(inFile)));
         // try {
-             walker.walk(writer, parser.sql_script());
+        walker.walk(writer, parser.sql_script());
         // } catch (Exception e) {
-        //    throw (e);
+        // throw (e);
         // } finally {
-            xsw.writeEndElement();
-            xsw.writeEndDocument();
-            xsw.flush();
-            xsw.close();
+        xsw.writeEndElement();
+        xsw.writeEndDocument();
+        xsw.flush();
+        xsw.close();
         // }
     }
 

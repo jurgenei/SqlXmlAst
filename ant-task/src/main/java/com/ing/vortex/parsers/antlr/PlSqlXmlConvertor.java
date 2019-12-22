@@ -15,6 +15,13 @@ import java.util.List;
 
 public class PlSqlXmlConvertor implements SqlConverterInterace {
 
+    
+    /** 
+     * @param inFile
+     * @param outFile
+     * @param path
+     * @throws Exception
+     */
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
         InputStream inputStream = new FileInputStream(inFile);
         CharStream s = CharStreams.fromStream(inputStream);

@@ -28,10 +28,19 @@ public class SqlXmlAstAntTask extends MatchingTask {
     private File baseDir = null;
     SqlXmlConverter converter = new SqlXmlConverter();
 
+    
+    /** 
+     * @return String
+     */
     public String getGrammar() {
         return converter.getGrammar();
     }
 
+    
+    /** 
+     * @param grammar
+     * @throws Exception
+     */
     public void setGrammar(final String grammar) throws Exception {
         converter.setGrammar(grammar);
     }
@@ -91,21 +100,41 @@ public class SqlXmlAstAntTask extends MatchingTask {
         destDir = dir;
     }
 
+    
+    /** 
+     * @param b
+     */
     public void setScanIncludedDirectories(final boolean b) {
         performDirectoryScan = b;
     }
 
+    
+    /** 
+     * @param b
+     */
     public void setFailOnNoResources(final boolean b) {
         failOnNoResources = b;
     }
 
+    
+    /** 
+     * @param b
+     */
     public void setPredictionMode(final String b) {
     }
 
+    
+    /** 
+     * @param rc
+     */
     public void add(final ResourceCollection rc) {
         resources.add(rc);
     }
 
+    
+    /** 
+     * @param useimplicitfileset
+     */
     public void setUseImplicitFileset(final boolean useimplicitfileset) {
         useImplicitFileset = useimplicitfileset;
     }
@@ -160,6 +189,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
         targetExtension = name;
     }
 
+    
+    /** 
+     * @param msg
+     */
     protected void handleError(final String msg) {
         if (failOnError) {
             throw new BuildException(msg, getLocation());
@@ -168,6 +201,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
 
+    
+    /** 
+     * @param ex
+     */
     protected void handleError(final Throwable ex) {
         if (failOnError) {
             throw new BuildException(ex);
@@ -179,6 +216,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
 
 
+    
+    /** 
+     * @param ex
+     */
     protected void handleTransformationError(final Exception ex) {
         if (failOnError && failOnTransformationError) {
             throw new BuildException(ex);
@@ -274,6 +315,13 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
 
 
+    
+    /** 
+     * @param inFile
+     * @param outFile
+     * @param path
+     * @throws BuildException
+     */
     private void process(final File inFile, final File outFile, final String path) throws BuildException {
         if (force || inFile.lastModified() >= outFile.lastModified() || outFile.length() == 0) {
             processFile(inFile, outFile, path);
@@ -282,6 +330,13 @@ public class SqlXmlAstAntTask extends MatchingTask {
         }
     }
 
+    
+    /** 
+     * @param inFile
+     * @param outFile
+     * @param path
+     * @throws BuildException
+     */
     private void processFile(final File inFile, final File outFile, final String path) throws BuildException {
         final StopWatch stopwatch = new StopWatch();
         stopwatch.start();
@@ -298,6 +353,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
         }
     }
 
+    
+    /** 
+     * @throws BuildException
+     */
     @Override
     public void execute() throws BuildException {
 

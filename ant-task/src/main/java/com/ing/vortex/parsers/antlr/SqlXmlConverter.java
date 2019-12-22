@@ -6,9 +6,18 @@ import java.io.File;
 public class SqlXmlConverter {
 
     String grammar = "oracle";
+    
+    /** 
+     * @return String
+     */
     public String getGrammar() {
         return grammar;
     }
+    
+    /** 
+     * @param grammar
+     * @throws Exception
+     */
     public void setGrammar(String grammar) throws Exception {
         switch(grammar) {
             case "oracle":
@@ -20,6 +29,13 @@ public class SqlXmlConverter {
         this.grammar = grammar;
     }
 
+    
+    /** 
+     * @param inFile
+     * @param outFile
+     * @param path
+     * @throws Exception
+     */
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
         SqlConverterInterace convertor;
         switch(grammar) {
@@ -35,6 +51,11 @@ public class SqlXmlConverter {
         ensureDirectoryFor(outFile);
         convertor.convert(inFile,outFile,path);
     }
+    
+    /** 
+     * @param targetFile
+     * @throws Exception
+     */
     private void ensureDirectoryFor(final File targetFile) throws Exception {
         final File directory = targetFile.getParentFile();
         if (!directory.exists()) {
