@@ -1,7 +1,5 @@
 package com.ing.vortex.parsers.antlr;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import java.io.*;
 
 public interface SqlConverterInterace {
