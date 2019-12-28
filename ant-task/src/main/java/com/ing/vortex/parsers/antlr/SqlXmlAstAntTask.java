@@ -1,7 +1,13 @@
 package com.ing.vortex.parsers.antlr;
 
-import java.io.File;
-
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.ParserATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.PredictionMode;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -11,6 +17,13 @@ import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 import org.apache.tools.ant.util.FileNameMapper;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -28,24 +41,18 @@ public class SqlXmlAstAntTask extends MatchingTask {
     private File baseDir = null;
     SqlXmlConverter converter = new SqlXmlConverter();
 
-    
-    /** 
-     * @return String
-     */
     public String getGrammar() {
         return converter.getGrammar();
     }
 
-    
-    /** 
-     * @param grammar
-     * @throws Exception
-     */
-    public void setGrammar(final String grammar) throws Exception {
+    public void setGrammar(String grammar) throws Exception {
         converter.setGrammar(grammar);
     }
 
-
+    /**
+     * name for parse, sybase or oracle
+     */
+    private String grammar = "oracle";
 
     /**
      * extension of the files produced by XSL processing
@@ -53,12 +60,29 @@ public class SqlXmlAstAntTask extends MatchingTask {
     private String targetExtension = ".xml";
 
     /**
+     * name for XSL parameter containing the filename
+     */
+    private String fileNameParameter = null;
+
+    /**
+     * name for XSL parameter containing the file directory
+     */
+    private String fileDirParameter = null;
+
+    /**
      * Input XML document to be used
      */
-    private final File inFile = null;
+    private File inFile = null;
+
+    /**
+     * Output file
+     */
+    private File outFile = null;
 
     private boolean failOnError = true;
     private boolean failOnTransformationError = true;
+
+    private String predictionMode = "ll";
 
     /**
      * force output of target files even if they already exist
@@ -91,8 +115,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
     /**
-     * Set the destination directory into which the XSL result files should be
-     * copied to; required, unless <tt>in</tt> and <tt>out</tt> are specified.
+     * Set the destination directory into which the XSL result
+     * files should be copied to;
+     * required, unless <tt>in</tt> and <tt>out</tt> are
+     * specified.
      *
      * @param dir the name of the destination directory
      **/
@@ -100,41 +126,22 @@ public class SqlXmlAstAntTask extends MatchingTask {
         destDir = dir;
     }
 
-    
-    /** 
-     * @param b
-     */
     public void setScanIncludedDirectories(final boolean b) {
         performDirectoryScan = b;
     }
 
-    
-    /** 
-     * @param b
-     */
     public void setFailOnNoResources(final boolean b) {
         failOnNoResources = b;
     }
 
-    
-    /** 
-     * @param b
-     */
     public void setPredictionMode(final String b) {
+        predictionMode = b;
     }
 
-    
-    /** 
-     * @param rc
-     */
     public void add(final ResourceCollection rc) {
         resources.add(rc);
     }
 
-    
-    /** 
-     * @param useimplicitfileset
-     */
     public void setUseImplicitFileset(final boolean useimplicitfileset) {
         useImplicitFileset = useimplicitfileset;
     }
@@ -189,10 +196,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
         targetExtension = name;
     }
 
-    
-    /** 
-     * @param msg
-     */
     protected void handleError(final String msg) {
         if (failOnError) {
             throw new BuildException(msg, getLocation());
@@ -201,10 +204,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
 
-    
-    /** 
-     * @param ex
-     */
     protected void handleError(final Throwable ex) {
         if (failOnError) {
             throw new BuildException(ex);
@@ -216,10 +215,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
 
 
-    
-    /** 
-     * @param ex
-     */
     protected void handleTransformationError(final Exception ex) {
         if (failOnError && failOnTransformationError) {
             throw new BuildException(ex);
@@ -315,13 +310,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
 
 
-    
-    /** 
-     * @param inFile
-     * @param outFile
-     * @param path
-     * @throws BuildException
-     */
     private void process(final File inFile, final File outFile, final String path) throws BuildException {
         if (force || inFile.lastModified() >= outFile.lastModified() || outFile.length() == 0) {
             processFile(inFile, outFile, path);
@@ -330,13 +318,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
         }
     }
 
-    
-    /** 
-     * @param inFile
-     * @param outFile
-     * @param path
-     * @throws BuildException
-     */
     private void processFile(final File inFile, final File outFile, final String path) throws BuildException {
         final StopWatch stopwatch = new StopWatch();
         stopwatch.start();
@@ -353,10 +334,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
         }
     }
 
-    
-    /** 
-     * @throws BuildException
-     */
     @Override
     public void execute() throws BuildException {
 

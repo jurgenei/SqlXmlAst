@@ -1,24 +1,18 @@
 package com.ing.vortex.parsers.antlr;
 
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 import java.io.File;
 
 public class SqlXmlConverter {
 
-    String grammar = "oracle";
-    
-    /** 
-     * @return String
-     */
-    public String getGrammar() {
+    private String grammar = "oracle";
+    String getGrammar() {
         return grammar;
     }
-    
-    /** 
-     * @param grammar
-     * @throws Exception
-     */
-    public void setGrammar(String grammar) throws Exception {
+    void setGrammar(String grammar) throws Exception {
         switch(grammar) {
             case "oracle":
             case "sybase":
@@ -29,33 +23,22 @@ public class SqlXmlConverter {
         this.grammar = grammar;
     }
 
-    
-    /** 
-     * @param inFile
-     * @param outFile
-     * @param path
-     * @throws Exception
-     */
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
-        SqlConverterInterace convertor;
+        XmlAstWriter xmlAstWriter;
         switch(grammar) {
             case "oracle":
-                convertor = new PlSqlXmlConvertor();
+                 xmlAstWriter = new XmlAstWriter(PlSqlParser.class, PlSqlLexer.class, PlSqlWriter.class);
                 break;
             case "sybase":
-                convertor = new TSqlXmlConvertor();
+                 xmlAstWriter = new XmlAstWriter(TSqlParser.class,TSqlLexer.class,TSqlWriter.class);
                 break;
             default:
                 throw new Exception("only oracle or sybase supported");
         }
         ensureDirectoryFor(outFile);
-        convertor.convert(inFile,outFile,path);
+        xmlAstWriter.convert(inFile,outFile,path);
     }
-    
-    /** 
-     * @param targetFile
-     * @throws Exception
-     */
+
     private void ensureDirectoryFor(final File targetFile) throws Exception {
         final File directory = targetFile.getParentFile();
         if (!directory.exists()) {
