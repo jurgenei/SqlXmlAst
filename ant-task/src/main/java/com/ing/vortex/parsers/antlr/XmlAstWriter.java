@@ -17,6 +17,7 @@ public class XmlAstWriter {
 
     private String commentNS = "http://ing.com/vortex/sql/comments";
     private String grammarNS = "http://ing.com/vortex/sql/grammar";
+    private final String grammar;
 
     private Class<Parser> parserClass;
     private Class<Lexer> lexerClass;
@@ -24,20 +25,16 @@ public class XmlAstWriter {
 
     private XMLStreamWriter xmlStreamWriter;
     private List<String> ruleNames;
-    private List<String> ruleStack;
-    private List<String> lexNames;
-
-
-
+    private final List<String> ruleStack;
     private CommonTokenStream tokenStream;
-    private HashMap<Integer, Boolean> booleanHashMap;
+    private final HashMap<Integer, Boolean> booleanHashMap;
 
     private Lexer lexer;
     private Parser parser;
 
     // the casts are checked!
     @SuppressWarnings("unchecked")
-    public XmlAstWriter(Class parser, Class lexer, Class listener) {
+    public XmlAstWriter(final Class parser, final Class lexer, final Class listener, final String g) {
         if (parser != null && Parser.class.isAssignableFrom(parser))
             parserClass = parser;
         else
@@ -53,41 +50,43 @@ public class XmlAstWriter {
 
         booleanHashMap = new HashMap<>();
         ruleStack = new ArrayList<>();
+        grammar = g;
     }
 
     public String getgrammarNS() {
         return grammarNS;
     }
 
-    public void setgrammarNS(String grammarNS) {
+    public void setgrammarNS(final String grammarNS) {
         this.grammarNS = grammarNS;
     }
-
 
     public String getCommentNS() {
         return commentNS;
     }
 
-    public void setCommentNS(String commentNS) {
+    public void setCommentNS(final String commentNS) {
         this.commentNS = commentNS;
     }
 
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
 
         // set up parser chain
-        InputStream inputStream = new FileInputStream(inFile);
-        CharStream s = CharStreams.fromStream(inputStream);
+        final InputStream inputStream = new FileInputStream(inFile);
+        final CharStream s = CharStreams.fromStream(inputStream);
         lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(s);
-        lexNames = Arrays.asList(lexer.getRuleNames());
+        Arrays.asList(lexer.getRuleNames());
         tokenStream = new CommonTokenStream(lexer);
         parser = parserClass.getDeclaredConstructor(TokenStream.class).newInstance(tokenStream);
         parser.setErrorHandler(new BailErrorStrategy());
         ruleNames = Arrays.asList(parser.getRuleNames());
-        XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-        //xmlStreamWriter = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(new FileOutputStream(outFile)));
+        final XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+        // xmlStreamWriter = new
+        // IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(new
+        // FileOutputStream(outFile)));
         xmlStreamWriter = xmlof.createXMLStreamWriter(new FileOutputStream(outFile));
 
-        ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
+        final ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
 
         // convert
         xmlStreamWriter.writeStartDocument();
@@ -95,11 +94,11 @@ public class XmlAstWriter {
         xmlStreamWriter.writeStartElement("sql");
         xmlStreamWriter.writeDefaultNamespace(grammarNS);
         xmlStreamWriter.writeNamespace("c", commentNS);
-        xmlStreamWriter.writeAttribute("grammar", "oracle");
+        xmlStreamWriter.writeAttribute("grammar", grammar);
         xmlStreamWriter.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xmlStreamWriter.writeAttribute("numlines", Integer.toString(countLines(inFile)));
         xmlStreamWriter.writeCharacters("\n");
-        ParseTreeWalker walker = new ParseTreeWalker();
+        final ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(writer, (ParseTree) (parserClass.getMethod("sql_script")).invoke(parser));
         xmlStreamWriter.writeCharacters("\n");
         xmlStreamWriter.writeEndElement();
@@ -109,8 +108,8 @@ public class XmlAstWriter {
 
     }
 
-    public String getRuleName(ParserRuleContext ctx) {
-        int ruleIndex = ctx.getRuleIndex();
+    public String getRuleName(final ParserRuleContext ctx) {
+        final int ruleIndex = ctx.getRuleIndex();
         String ruleName;
         if (ruleIndex >= 0 && ruleIndex < ruleNames.size()) {
             ruleName = ruleNames.get(ruleIndex).replace('_', '-');
@@ -120,23 +119,22 @@ public class XmlAstWriter {
         return ruleName;
     }
 
-    public void writeStartElement(ParserRuleContext ctx) throws XMLStreamException {
+    public void writeStartElement(final ParserRuleContext ctx) throws XMLStreamException {
         commentBefore(ctx);
-        String ruleName = getRuleName(ctx);
+        final String ruleName = getRuleName(ctx);
         xmlStreamWriter.writeStartElement("", ruleName, grammarNS);
         ruleStack.add(ruleName);
     }
 
-    public void writeEndElement(ParserRuleContext ctx) throws XMLStreamException {
+    public void writeEndElement(final ParserRuleContext ctx) throws XMLStreamException {
         xmlStreamWriter.writeEndElement();
         ruleStack.remove(ruleStack.size() - 1);
         commentAfter(ctx);
     }
 
-
-    public void writeToken(TerminalNode node) throws XMLStreamException {
-        String text = node.getText();
-        Token token = node.getSymbol();
+    public void writeToken(final TerminalNode node) throws XMLStreamException {
+        final String text = node.getText();
+        final Token token = node.getSymbol();
 
         commentBefore(token);
         if (ruleStack.size() > 1 || !text.equals("<EOF>")) {
@@ -145,65 +143,63 @@ public class XmlAstWriter {
             xmlStreamWriter.writeEndElement();
         }
         /*
-        else {
-            xmlStreamWriter.writeEmptyElement("c", "eof", commentNS);
-        }
-        */
+         * else { xmlStreamWriter.writeEmptyElement("c", "eof", commentNS); }
+         */
         commentAfter(token);
     }
 
-    public void writeError(String message) throws XMLStreamException {
+    public void writeError(final String message) throws XMLStreamException {
         xmlStreamWriter.writeStartElement(grammarNS, "error");
         xmlStreamWriter.writeCharacters(message);
         xmlStreamWriter.writeEndElement();
     }
 
-    public void processComments(List<Token> list) throws XMLStreamException {
+    public void processComments(final List<Token> list) throws XMLStreamException {
         if (list == null || list.isEmpty())
             return;
-        Iterator<Token> iter = list.iterator();
+        final Iterator<Token> iter = list.iterator();
         while (iter.hasNext()) {
-            Token token = iter.next();
-            int in = token.getTokenIndex();
+            final Token token = iter.next();
+            final int in = token.getTokenIndex();
             if (booleanHashMap.containsKey(in))
                 continue;
             booleanHashMap.put(in, Boolean.TRUE);
-            String typeName = lexer.getVocabulary().getSymbolicName(token.getType());
-            String value = token.getText();
-            writeComment(value,typeName);
+            final String typeName = lexer.getVocabulary().getSymbolicName(token.getType());
+            final String value = token.getText();
+            writeComment(value, typeName);
         }
     }
 
-    private void writeComment(String comment, String tagName) throws XMLStreamException {
+    private void writeComment(final String comment, final String tagName) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("c", tagName, commentNS);
         writeChars(comment);
         xmlStreamWriter.writeEndElement();
     }
 
-    private void writeChars(String s) throws XMLStreamException {
+    private void writeChars(final String s) throws XMLStreamException {
         xmlStreamWriter.writeCharacters(s);
     }
 
-    private void commentBefore(ParserRuleContext ctx) throws XMLStreamException {
+    private void commentBefore(final ParserRuleContext ctx) throws XMLStreamException {
         processComments(tokenStream.getHiddenTokensToLeft(ctx.getStart().getTokenIndex()));
     }
 
-    private void commentAfter(ParserRuleContext ctx) throws XMLStreamException {
+    private void commentAfter(final ParserRuleContext ctx) throws XMLStreamException {
         processComments(tokenStream.getHiddenTokensToRight(ctx.getStop().getTokenIndex()));
     }
 
-    private void commentBefore(Token token) throws XMLStreamException {
+    private void commentBefore(final Token token) throws XMLStreamException {
         processComments(tokenStream.getHiddenTokensToLeft(token.getTokenIndex()));
     }
 
-    private void commentAfter(Token token) throws XMLStreamException {
+    private void commentAfter(final Token token) throws XMLStreamException {
         processComments(tokenStream.getHiddenTokensToRight(token.getTokenIndex()));
     }
 
-    public int countLines(File file) throws IOException {
-        InputStream is = new BufferedInputStream(new FileInputStream(file));
+    public int countLines(final File file) throws IOException {
+        final InputStream is = new BufferedInputStream(new FileInputStream(file));
         try {
-            byte[] c = new byte[1024];
+            final byte[] c = new byte[1024];
             int count = 0;
             int readChars = 0;
             boolean empty = true;

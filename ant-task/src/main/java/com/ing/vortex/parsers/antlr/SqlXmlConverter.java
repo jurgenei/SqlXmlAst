@@ -1,9 +1,5 @@
 package com.ing.vortex.parsers.antlr;
 
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-
 import java.io.File;
 
 public class SqlXmlConverter {
@@ -27,10 +23,10 @@ public class SqlXmlConverter {
         XmlAstWriter xmlAstWriter;
         switch(grammar) {
             case "oracle":
-                 xmlAstWriter = new XmlAstWriter(PlSqlParser.class, PlSqlLexer.class, PlSqlWriter.class);
+                 xmlAstWriter = new XmlAstWriter(PlSqlParser.class, PlSqlLexer.class, PlSqlWriter.class, grammar);
                 break;
             case "sybase":
-                 xmlAstWriter = new XmlAstWriter(TSqlParser.class,TSqlLexer.class,TSqlWriter.class);
+                 xmlAstWriter = new XmlAstWriter(TSqlParser.class,TSqlLexer.class,TSqlWriter.class, grammar);
                 break;
             default:
                 throw new Exception("only oracle or sybase supported");

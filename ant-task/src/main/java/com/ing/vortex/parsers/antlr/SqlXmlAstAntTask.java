@@ -1,13 +1,8 @@
 package com.ing.vortex.parsers.antlr;
 
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.LexerATNSimulator;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
-import org.antlr.v4.runtime.atn.PredictionMode;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import java.io.File;
+
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -17,13 +12,6 @@ import org.apache.tools.ant.types.Mapper;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 import org.apache.tools.ant.util.FileNameMapper;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -45,14 +33,14 @@ public class SqlXmlAstAntTask extends MatchingTask {
         return converter.getGrammar();
     }
 
-    public void setGrammar(String grammar) throws Exception {
+    public void setGrammar(final String grammar) throws Exception {
         converter.setGrammar(grammar);
     }
 
     /**
      * name for parse, sybase or oracle
      */
-    private String grammar = "oracle";
+    private final String grammar = "oracle";
 
     /**
      * extension of the files produced by XSL processing
@@ -62,22 +50,22 @@ public class SqlXmlAstAntTask extends MatchingTask {
     /**
      * name for XSL parameter containing the filename
      */
-    private String fileNameParameter = null;
+    private final String fileNameParameter = null;
 
     /**
      * name for XSL parameter containing the file directory
      */
-    private String fileDirParameter = null;
+    private final String fileDirParameter = null;
 
     /**
      * Input XML document to be used
      */
-    private File inFile = null;
+    private final File inFile = null;
 
     /**
      * Output file
      */
-    private File outFile = null;
+    private final File outFile = null;
 
     private boolean failOnError = true;
     private boolean failOnTransformationError = true;
