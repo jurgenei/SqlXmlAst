@@ -1280,6 +1280,12 @@ PERCENT_RANKM:                P E R C E N T '_' R A N K M ;
 PERCENT_ROWCOUNT:             '%' R O W C O U N T ;
 PERCENT_ROWTYPE:              '%' R O W T Y P E ;
 PERCENT_TYPE:                 '%' T Y P E ;
+
+FOUND:                        F O U N D;
+NOTFOUND:                     N O T F O U N D;
+ROWCOUNT:                     R O W C O U N T ;
+
+
 PERFORMANCE:                  P E R F O R M A N C E ;
 PERIOD_KEYWORD:               P E R I O D ;
 PERMANENT:                    P E R M A N E N T ;
@@ -2276,7 +2282,7 @@ DOUBLE_PERIOD:  '..';
 PERIOD:         '.';
 
 //{ Rule #238 <EXACT_NUM_LIT>
-//  This rule is a bit tricky - it resolves the ambiguity with <PERIOD> 
+//  This rule is a bit tricky - it resolves the ambiguity with <PERIOD>
 //  It also incorporates <mantisa> and <exponent> for the <APPROXIMATE_NUM_LIT>
 //  Rule #501 <signed_integer> was incorporated directly in the token <APPROXIMATE_NUM_LIT>
 //  See also the rule #617 <unsigned_num_lit>
@@ -2364,7 +2370,7 @@ INTRODUCER
     ;
 
 //{ Rule #479 <SEPARATOR>
-//  It was originally a protected rule set to be filtered out but the <COMMENT> and <'-'> clashed. 
+//  It was originally a protected rule set to be filtered out but the <COMMENT> and <'-'> clashed.
 /*SEPARATOR
     : '-' -> type('-')
     | COMMENT -> channel(HIDDEN)
@@ -2374,7 +2380,7 @@ INTRODUCER
 
 SPACES: [ \t\r\n]+ -> skip;
 
-    
+
 // Rule #504 <SIMPLE_LETTER> - simple_latin _letter was generalised into SIMPLE_LETTER
 //  Unicode is yet to be implemented - see NSF0
 // JH extended with lowe case
@@ -2411,7 +2417,7 @@ START_CMD
 
 fragment
 NEWLINE: '\r'? '\n';
-    
+
 fragment
 SPACE: [ \t];
 
