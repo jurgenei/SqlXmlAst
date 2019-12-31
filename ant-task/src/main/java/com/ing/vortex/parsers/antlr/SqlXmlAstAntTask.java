@@ -17,6 +17,7 @@ import org.apache.tools.ant.util.FileNameMapper;
 /**
  * @author Jurgen Hildebrand
  */
+
 public class SqlXmlAstAntTask extends MatchingTask {
     /**
      * destination directory
@@ -38,24 +39,11 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
     /**
-     * name for parse, sybase or oracle
-     */
-    private final String grammar = "oracle";
-
-    /**
      * extension of the files produced by XSL processing
      */
     private String targetExtension = ".xml";
 
-    /**
-     * name for XSL parameter containing the filename
-     */
-    private final String fileNameParameter = null;
-
-    /**
-     * name for XSL parameter containing the file directory
-     */
-    private final String fileDirParameter = null;
+ 
 
     /**
      * Input XML document to be used
@@ -65,12 +53,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
     /**
      * Output file
      */
-    private final File outFile = null;
-
+ 
     private boolean failOnError = true;
     private boolean failOnTransformationError = true;
 
-    private String predictionMode = "ll";
 
     /**
      * force output of target files even if they already exist

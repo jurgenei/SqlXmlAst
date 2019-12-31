@@ -14,6 +14,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         this.xmlAstWriter = xmlAstWriter;
     }
 
+     
+     /** 
+      * @param ctx
+      */
      public void enterEveryRule(ParserRuleContext ctx) {
         try {
             xmlAstWriter.writeStartElement(ctx);
@@ -22,6 +26,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         }
     }
 
+     
+     /** 
+      * @param ctx
+      */
      public void exitEveryRule(ParserRuleContext ctx) {
         try {
             xmlAstWriter.writeEndElement(ctx);
@@ -30,6 +38,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         }
     }
 
+     
+     /** 
+      * @param node
+      */
      public void visitTerminal(TerminalNode node) {
         try {
             xmlAstWriter.writeToken(node);
@@ -38,6 +50,10 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         }
     }
 
+     
+     /** 
+      * @param node
+      */
      public void visitErrorNode(ErrorNode node) {
         try {
             xmlAstWriter.writeError(node.getText());
