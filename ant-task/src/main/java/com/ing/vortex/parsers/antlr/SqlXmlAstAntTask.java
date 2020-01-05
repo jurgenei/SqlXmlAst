@@ -28,7 +28,8 @@ public class SqlXmlAstAntTask extends MatchingTask {
      * where to find the source XML file, default is the project's basedir
      */
     private File baseDir = null;
-    SqlXmlConverter converter = new SqlXmlConverter();
+
+    private SqlXmlConverter converter = new SqlXmlConverter();
 
     public String getGrammar() {
         return converter.getGrammar();
@@ -106,10 +107,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
     public void setFailOnNoResources(final boolean b) {
         failOnNoResources = b;
-    }
-
-    public void setPredictionMode(final String b) {
-        predictionMode = b;
     }
 
     public void add(final ResourceCollection rc) {
