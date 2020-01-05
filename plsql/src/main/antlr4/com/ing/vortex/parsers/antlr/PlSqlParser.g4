@@ -4639,6 +4639,8 @@ regular_id
     | VAR_
     | COVAR_
     | PERIOD_KEYWORD // added jurgen
+    | ROWCOUNT // added jurgen
+    | FOUND // added jurgen
     ;
 
 non_reserved_keywords_in_12c
