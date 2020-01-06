@@ -496,6 +496,7 @@ ENTITYESCAPING:               E N T I T Y E S C A P I N G ;
 ENTRY:                        E N T R Y ;
 EQUIPART:                     E Q U I P A R T ;
 ERR:                          E R R ;
+ERRO:                         E R R O;
 ERROR_ARGUMENT:               E R R O R '_' A R G U M E N T ;
 ERROR:                        E R R O R ;
 ERROR_ON_OVERLAP_TIME:        E R R O R '_' O N '_' O V E R L A P '_' T I M E ;
@@ -1094,6 +1095,7 @@ NOREWRITE:                    N O R E W R I T E ;
 NORMAL:                       N O R M A L ;
 NO_ROOT_SW_FOR_LOCAL:         N O '_' R O O T '_' S W '_' F O R '_' L O C A L ;
 NOROWDEPENDENCIES:            N O R O W D E P E N D E N C I E S ;
+NOSCALE:                      N O S C A L E;
 NOSCHEMACHECK:                N O S C H E M A C H E C K ;
 NOSEGMENT:                    N O S E G M E N T ;
 NO_SEMIJOIN:                  N O '_' S E M I J O I N ;
@@ -1364,6 +1366,7 @@ PROCESS:                      P R O C E S S ;
 PROFILE:                      P R O F I L E ;
 PROGRAM:                      P R O G R A M ;
 PROJECT:                      P R O J E C T ;
+PROMPT:                       P R O M P T;
 PROPAGATE:                    P R O P A G A T E ;
 PROTECTED:                    P R O T E C T E D ;
 PROTECTION:                   P R O T E C T I O N ;
@@ -1449,6 +1452,7 @@ RELY:                         R E L Y ;
 REMAINDER:                    R E M A I N D E R ;
 REMOTE_MAPPED:                R E M O T E '_' M A P P E D ;
 REMOVE:                       R E M O V E ;
+REM:                          R E M;
 RENAME:                       R E N A M E ;
 REPAIR:                       R E P A I R ;
 REPEAT:                       R E P E A T ;
@@ -2302,15 +2306,17 @@ APPROXIMATE_NUM_LIT: FLOAT_FRAGMENT ('E' ('+'|'-')? (FLOAT_FRAGMENT | [0-9]+))? 
 
 // Rule #--- <CHAR_STRING> is a base for Rule #065 <char_string_lit> , it incorporates <character_representation>
 // and a superfluous subtoken typecasting of the "QUOTE"
-CHAR_STRING: '\'' (~('\'' | '\r' | '\n') | '\'' '\'' | NEWLINE)* '\'';
+CHAR_STRING:  '\'' (~('\'' | '\r' | '\n') | '\'' '\'' | NEWLINE)* '\'';
 
 // Perl-style quoted string, see Oracle SQL reference, chapter String Literals
-CHAR_STRING_PERL    : 'Q' ( QS_ANGLE | QS_BRACE | QS_BRACK | QS_PAREN) -> type(CHAR_STRING);
+CHAR_STRING_PERL    : Q ( QS_ANGLE | QS_BRACE | QS_BRACK | QS_PAREN | QS_HASH) -> type(CHAR_STRING);
 fragment QUOTE      : '\'' ;
 fragment QS_ANGLE   : QUOTE '<' .*? '>' QUOTE ;
 fragment QS_BRACE   : QUOTE '{' .*? '}' QUOTE ;
 fragment QS_BRACK   : QUOTE '[' .*? ']' QUOTE ;
 fragment QS_PAREN   : QUOTE '(' .*? ')' QUOTE ;
+fragment QS_HASH    : QUOTE '#' .*? '#' QUOTE ;
+
 fragment QS_OTHER_CH: ~('<' | '{' | '[' | '(' | ' ' | '\t' | '\n' | '\r');
 
 DELIMITED_ID: '"' (~('"' | '\r' | '\n') | '"' '"')+ '"' ;
@@ -2396,15 +2402,10 @@ FLOAT_FRAGMENT
 
 // Rule #097 <COMMENT>
 
-SINGLE_LINE_COMMENT: '--' ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
+SINGLE_LINE_COMMENT: '--'  ~('\r' | '\n')* (NEWLINE | EOF)  -> channel(HIDDEN);
 MULTI_LINE_COMMENT:  '/*' .*? '*/'                          -> channel(HIDDEN);
-
-// SQL*Plus prompt
-// TODO should be grammar rule, but tricky to implement
-
-PROMPT
-    : P R O M P T SPACE ( ~('\r' | '\n') )* (NEWLINE|EOF)
-    ;
+REM_COMMENT:          REM SPACE ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
+PROMPT_COMMENT:       PROMPT SPACE ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
 
 START_CMD
     // TODO When using full word START there is a conflict with START WITH in sequences and CONNECT BY queries

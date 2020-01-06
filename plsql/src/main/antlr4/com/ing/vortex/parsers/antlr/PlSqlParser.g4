@@ -538,6 +538,9 @@ sequence_spec
     | NOCACHE
     | ORDER
     | NOORDER
+    | NOKEEP
+    | NOSCALE
+    | GLOBAL
     ;
 
 sequence_start_clause
@@ -2107,9 +2110,8 @@ allow_or_disallow
 // Synonym DDL Clauses
 
 create_synonym
-    // Synonym's schema cannot be specified for public synonyms
     : CREATE (OR REPLACE)? PUBLIC SYNONYM synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
-    | CREATE (OR REPLACE)? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
+    | CREATE (OR REPLACE)? EDITIONABLE? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
     ;
 
 comment_on_table
@@ -2421,7 +2423,7 @@ alter_table
       | alter_table_properties
       | constraint_clauses
       | column_clauses
-      | alter_table_partitioning
+      | alter_table_modify
 //TODO      | alter_external_table
       | move_table_clause
       )
@@ -2429,9 +2431,19 @@ alter_table
       ';'
     ;
 
-alter_table_partitioning
-    : MODIFY table_partitioning_clauses (UPDATE INDEXES '(' index_name_scope (',' index_name_scope)* ')')?
+alter_table_modify
+    : MODIFY alter_table_modify_clause
     ;
+
+alter_table_modify_clause
+    : table_partitioning_clauses index_updates?
+    | (','? modify_col_properties)+
+    ;
+
+index_updates
+    : UPDATE INDEXES '(' index_name_scope (',' index_name_scope)* ')'
+    ;
+
 index_name_scope
    : index_name (LOCAL|GLOBAL)?
    ;
@@ -2462,6 +2474,7 @@ alter_table_properties_1
       | parallel_clause
       | row_movement_clause
       | flashback_archive_clause
+      | PARALLEL '(' DEGREE UNSIGNED_INTEGER ')' // added jurgen
       )+
       alter_iot_clauses?
     ;
@@ -2724,7 +2737,7 @@ end_time_column
 
 column_definition
     : column_name (datatype | type_name)
-         SORT?  (DEFAULT expression)? (ENCRYPT (USING  CHAR_STRING)? (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?  (inline_constraint* | inline_ref_constraint ) identity_spec?
+         SORT?  (DEFAULT expression)? (ENCRYPT (USING  CHAR_STRING)? (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?  (inline_constraint* | inline_ref_constraint ) (identity_spec inline_constraint?)?
     ;
 identity_spec
     : GENERATED (BY DEFAULT (ON NULL)?|ALWAYS) AS IDENTITY (sequence_start_clause|sequence_spec)+
@@ -2982,7 +2995,7 @@ label_declaration
 
 statement
     : CREATE swallow_to_semi
-    | TRUNCATE swallow_to_semi
+    //| TRUNCATE swallow_to_semi
     | body
     | block
     | assignment_statement
@@ -3099,7 +3112,7 @@ pipe_row_statement
     : PIPE ROW '(' expression ')';
 
 body
-    : BEGIN seq_of_statements (EXCEPTION exception_handler+)? END label_name?
+    : BEGIN seq_of_statements (EXCEPTION exception_handler+)* END label_name?
     ;
 
 // Body Specific Clause
@@ -3526,6 +3539,7 @@ column_based_update_set_clause
 
 delete_statement
     : DELETE FROM? general_table_ref where_clause? static_returning_clause? error_logging_clause?
+    | TRUNCATE TABLE general_table_ref
     ;
 
 insert_statement
@@ -3830,7 +3844,7 @@ string_function
     | CHR '(' concatenation USING NCHAR_CS ')'
     | NVL '(' expression ',' expression ')'
     | TRIM '(' ((LEADING | TRAILING | BOTH)? quoted_string? FROM)? concatenation ')'
-    | TO_DATE '(' expression (',' quoted_string)? ')'
+    | TO_DATE '(' expression (',' quoted_string)* ')' // Jurgen, todate might have 3 args
     ;
 
 standard_function
@@ -4042,8 +4056,8 @@ xmlserialize_param_ident_part
 sql_plus_command
     : '/'
     | EXIT
-    | PROMPT
-    | SHOW (ERR | ERROR | ERRORS)
+    | PROMPT_COMMENT
+    | SHOW (ERR | ERROR | ERRO | ERRORS)
     | START_CMD
     | whenever_command
     | set_command
@@ -4551,7 +4565,7 @@ quoted_string
     ;
 
 identifier
-    : (INTRODUCER char_set_name)? id_expression
+    : (INTRODUCER char_set_name?)? id_expression // Jurgen Index names may start with _ without char_set_name? added?
     ;
 
 id_expression
@@ -4641,6 +4655,7 @@ regular_id
     | PERIOD_KEYWORD // added jurgen
     | ROWCOUNT // added jurgen
     | FOUND // added jurgen
+    | REM // added jurgen
     ;
 
 non_reserved_keywords_in_12c
