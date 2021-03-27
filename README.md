@@ -1,6 +1,6 @@
 # Build Status
 
-[![Travis Status](https://api.travis-ci.org/jurgenei/SqlXmlAst.png)](https://travis-ci.org/jurgenei/SqlXmlAst)
+[![Travis Status](https://api.travis-ci.com/jurgenei/SqlXmlAst.png)](https://travis-ci.com/jurgenei/SqlXmlAst)
 
 # What is SqlXmlAst?
 
