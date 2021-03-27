@@ -5,8 +5,8 @@
     <packaging>jar</packaging>
     <name>Ant Task</name>
     <parent>
-        <groupId>com.ing.vortex.parsers.antlr</groupId>
-        <artifactId>grammarsv4</artifactId>
+        <groupId>nl.xs4all.home.ei.parsers.antlr</groupId>
+        <artifactId>sqlxmlast</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -21,14 +21,10 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <tasks>
-                                <!--
-                                <mkdir dir="${project.build.directory}/classes"/>
-                                -->
                                 <property name="compile_classpath" refid="maven.compile.classpath"/>
                                 <property name="runtime_classpath" refid="maven.runtime.classpath"/>
                                 <property name="test_classpath" refid="maven.test.classpath"/>
                                 <property name="plugin_classpath" refid="maven.plugin.classpath"/>
-
                                 <echo message="compile classpath: ${compile_classpath}"/>
                                 <echo message="runtime classpath: ${runtime_classpath}"/>
                                 <echo message="test classpath:    ${test_classpath}"/>
@@ -44,14 +40,6 @@
         </plugins>
     </build>
     <dependencies>
-        <!--
-            not needed for space preserving syntax treess
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>txw2</artifactId>
-            <version>2.2.11</version>
-        </dependency>
-       -->
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
@@ -63,13 +51,13 @@
             <version>2.5</version>
         </dependency>
         <dependency>
-            <groupId>com.ing.vortex.parsers.antlr</groupId>
+            <groupId>nl.xs4all.home.ei.parsers.antlr</groupId>
             <artifactId>tsql</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.ing.vortex.parsers.antlr</groupId>
+            <groupId>nl.xs4all.home.ei.parsers.antlr</groupId>
             <artifactId>plsql</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>

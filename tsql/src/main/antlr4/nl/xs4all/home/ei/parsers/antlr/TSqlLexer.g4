@@ -1,14 +1,14 @@
 /*
 T-SQL (Transact-SQL, MSSQL) grammar.
 The MIT License (MIT).
-Copyright (c) 2018,2019, Jurgen Hildebrand (Jurgen.Hildebrand@ing.com), ING Bank.
+Copyright (c) 2018,2021, Jurgen Hildebrand (ei@xs4all.nl).
 Copyright (c) 2017, Mark Adams (madams51703@gmail.com)
 Copyright (c) 2015-2017, Ivan Kochurkin (kvanttt@gmail.com), Positive Technologies.
 Copyright (c) 2016, Scott Ure (scott@redstormsoftware.com).
 Copyright (c) 2016, Rui Zhang (ruizhang.ccs@gmail.com).
 Copyright (c) 2016, Marcus Henriksson (kuseman80@gmail.com).
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+of this software and associated documentation files (the "SoftFware"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
@@ -25,7 +25,7 @@ THE SOFTWARE.
 */
 
 lexer grammar TSqlLexer;
-//@lexer::header {package com.ing.vortex.parsers.antlr;}
+//@lexer::header {package nl.xs4all.home.ei.parsers.antlr;}
 //
 fragment A: [aA];
 fragment B: [bB];
@@ -908,10 +908,10 @@ SIGNAL:                                S I G N A L;
 RESIGNAL:                              R E S I G N A L;
 
 
-SPACE:              [ \t\r\n]+    -> skip;
+SPACES:              [ \t\r\n]+    -> channel(HIDDEN);
 // https://docs.microsoft.com/en-us/sql/t-sql/language-elements/slash-star-comment-transact-sql
-COMMENT:            '/*' (COMMENT | .)*? '*/' -> channel(HIDDEN);
-LINE_COMMENT:       ('--'|'//') ~[\r\n]* -> channel(HIDDEN);
+MULTI_LINE_COMMENT:            '/*' (MULTI_LINE_COMMENT | .)*? '*/' -> channel(HIDDEN);
+SINGLE_LINE_COMMENT:       ('--'|'//') ~[\r\n]* -> channel(HIDDEN);
 
 // TODO: ID can be not only Latin.
 DOUBLE_QUOTE_ID:    '"' (~'"'|'""')* '"' | '""';
@@ -923,7 +923,7 @@ ID:                  ( [A-Za-z_#] | FullWidthLetter) ( [A-Za-z_#$@0-9] | FullWid
 QUOTED_URL:          '\''([A-Za-z][A-Za-z]+[:]) '//'(([A-Za-z]+[.]|[A-Za-z]+)|IPV4_ADDR) [:] DECIMAL '\'';
 QUOTED_HOST_AND_PORT:'\''(([A-Za-z]+[.]|[A-Za-z]+)|IPV4_ADDR) ([:] DECIMAL) '\'';
 STRING:              'N'? '\'' (~'\'' | '\'\'')* '\'';
-BINARY:              '0' 'X' HEX_DIGIT*;
+BINARY:              '0' [Xx] HEX_DIGIT*;
 FLOAT:               DEC_DOT_DEC;
 REAL:                (DECIMAL | DEC_DOT_DEC) ('E' [+-]? DEC_DIGIT+);
 
@@ -934,7 +934,7 @@ LESS:                '<';
 EXCLAMATION:         '!';
 
 PLUS_ASSIGN:         '+=';
-MINUS_ASSIGN:        '-=';
+MINUS_ASSIGNDECIMAL:        '-=';
 MULT_ASSIGN:         '*=';
 ROUT_JOIN:           '=*';
 

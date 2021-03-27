@@ -1,36 +1,4 @@
 create or replace PROCEDURE determine_cover_start_date AS
-   /**************************************************************************************************
-    *
-    * ING Barings /Ops&IT/ITRF/Lending and Country
-    *
-    * Project    :	Vortex - Wholesale [Change request 277]
-    *
-    * Object     : determine_cover_start_date
-    *
-    * Description:	Determine the cover startdate.
-    *
-    * Parameter(s):
-    *
-    * Operation:
-    *
-    * Pre-Condition:
-    *
-    * Release History:
-    *
-    * Release Date     Author Release History
-    * ------- -------- ------ -----------------------------------------------------------
-    * 1.0	   	20061127 JW 	Initial creation based on change request 285
-    * 1.1	   	20061205 JW 	finding 33885 (formula incorrect implemented
-    * 1.2     	20080625 JS		Using only amounts and percentages from valid_cover_amount.
-    * 1.3		20081128 JS		Percentages and amounts were switched.
-    * 1.4		20090811 AD		SWB performance issue on UAT
-    * 7.55.0  	20110720 DVV    Added changed_indicator for SDP support.
-    * 8.0		20150422 NB     US-594 - Fill Cover Start Date for Revenue Sharing Covers based on Original Cover Start Date determination. Additional details: https://confluence.europe.intranet/x/qaHQB
-    * 8.1.33       20150622 GvG    US-662 Changes in Vortex Defaulting behavior for Generated Covers Start Date (to be applied to IRA functionality)
-    * 8.1.531 20161219   NM  VST-7815 Vortex Processing Business: dwh_cover.cover_start_date can be wrong when systems are not loaded in reporting date order
-    * IFRS_COV_8.3.77 20170801  STRY0237695: RIS0003871: [ PAT ] IFRS9 - LTR ??? 30 June - Exception - Cover Start Date is missing and defaulted to first delivery date of Cover
-    * SOM   20180730    Deepak Gupta    Oracle Migration:
-    ***************************************************************************************************/
 
     v_procname                   pkg_subtype.procedure_name;
     v_error                      NUMBER(12);
@@ -47,11 +15,7 @@ create or replace PROCEDURE determine_cover_start_date AS
     v_system_id                  pkg_subtype.system_id;
     v_reporting_date             pkg_subtype.dsa_reporting_date;
     v_starters_package_version   VARCHAR2(10 CHAR);
-/*
- $Rev: 89896 $
- $Date: 2017-01-24 07:43:32 +0100 (Tue, 24 Jan 2017) $
- $URL: https://itrf-svn.europe.intranet:20443/svn/vortex-central/trunk/ase/dsa/procedure/04.shared_facilities/5._cover_allocation/determine_cover_start_date.sql $
-*/
+
 BEGIN
     v_procname := $$plsql_unit;
     utilities.log_msg(v_procname,'start');

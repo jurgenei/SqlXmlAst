@@ -2,7 +2,7 @@
 T-SQL (Transact-SQL, MSSQL) grammar.
 The MIT License (MIT).
 
-Copyright (c) 2018,2019, Jurgen Hildebrand (Jurgen.Hildebrand@ing.com), ING Bank.
+Copyright (c) 2018,2021, Jurgen Hildebrand (ei@xs4all.nl).
 Copyright (c) 2017, Mark Adams (madams51703@gmail.com)
 Copyright (c) 2015-2017, Ivan Kochurkin (kvanttt@gmail.com), Positive Technologies.
 Copyright (c) 2016, Scott Ure (scott@redstormsoftware.com).
@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 parser grammar TSqlParser;
 //@header {
-//    package com.ing.vortex.parsers.antlr;
+//    package nl.xs4all.home.ei.parsers.antlr;
 //}
 options { tokenVocab=TSqlLexer; }
 

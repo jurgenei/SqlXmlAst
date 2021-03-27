@@ -20,7 +20,7 @@
 
 parser grammar PlSqlParser;
 //@header {
-//    package com.ing.vortex.parsers.antlr;
+//    package nl.xs4all.home.ei.parsers.antlr;
 //}
 options { tokenVocab=PlSqlLexer; }
 
@@ -50,7 +50,6 @@ unit_statement
     | alter_user
     | alter_view
     | alter_session
-
     | analyze
     | associate_statistics
     | audit_traditional
@@ -93,14 +92,18 @@ unit_statement
     | anonymous_block
 
     | grant_statement
+    | procedure_call
     ;
 
 // DDL -> SQL Statements for Stored PL/SQL Units
 
 alter_session
-   : ALTER SESSION update_set_clause ';'?
+   : ALTER SESSION (update_set_clause|force_parallel) ';'?
    ;
 
+force_parallel
+   :  FORCE PARALLEL identifier PARALLEL UNSIGNED_INTEGER
+   ;
 // Function DDLs
 
 drop_function
@@ -551,7 +554,7 @@ create_index
     : CREATE (UNIQUE | BITMAP)? INDEX index_name
        ON (cluster_index_clause | table_index_clause | bitmap_join_index_clause)
        UNUSABLE?
-       ';'
+       ';'?
     ;
 
 cluster_index_clause
@@ -2603,7 +2606,12 @@ modify_column_clauses
     ;
 
 modify_col_properties
-    : column_name datatype? (DEFAULT expression)? (ENCRYPT encryption_spec | DECRYPT)? inline_constraint* lob_storage_clause? //TODO alter_xmlschema_clause
+    : column_name modify_col_spec
+    ;
+
+modify_col_spec
+    : datatype? (DEFAULT expression)? (ENCRYPT encryption_spec | DECRYPT)? inline_constraint* lob_storage_clause? //TODO alter_xmlschema_clause
+    | identity_spec
     ;
 
 modify_col_substitutable
@@ -3106,6 +3114,10 @@ return_statement
 
 function_call
     : CALL? routine_name function_argument?
+    ;
+
+procedure_call
+    : EXECUTE? routine_name function_argument?
     ;
 
 pipe_row_statement

@@ -1,4 +1,4 @@
-package com.ing.vortex.parsers.antlr;
+package nl.xs4all.home.ei.parsers.antlr;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -15,8 +15,8 @@ import java.util.*;
 public class XmlAstWriter {
 
 
-    private String commentNS = "http://ing.com/vortex/sql/comments";
-    private String grammarNS = "http://ing.com/vortex/sql/grammar";
+    private String commentNS = "http://ei.home.xs4all.nl/sql/comments";
+    private String grammarNS = "http://ei.home.xs4all.nl/sql/grammar";
     private final String grammar;
 
     private Class<Parser> parserClass;

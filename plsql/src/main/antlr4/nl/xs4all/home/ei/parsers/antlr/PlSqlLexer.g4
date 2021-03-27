@@ -19,7 +19,7 @@
  */
 
 lexer grammar PlSqlLexer;
-//@lexer::header {package com.ing.vortex.parsers.antlr;}
+//@lexer::header {package nl.xs4all.home.ei.parsers.antlr;}
 // JH: case independent lexer
 fragment A: [aA];
 fragment B: [bB];
@@ -517,7 +517,7 @@ EXCHANGE:                     E X C H A N G E ;
 EXCLUDE:                      E X C L U D E ;
 EXCLUDING:                    E X C L U D I N G ;
 EXCLUSIVE:                    E X C L U S I V E ;
-EXECUTE:                      E X E C U T E ;
+EXECUTE:                      E X E C ( U T E )?;
 EXEMPT:                       E X E M P T ;
 EXISTING:                     E X I S T I N G ;
 EXISTS:                       E X I S T S ;
@@ -738,6 +738,7 @@ INVALIDATE:                   I N V A L I D A T E ;
 INVISIBLE:                    I N V I S I B L E ;
 IN_XQUERY:                    I N '_' X Q U E R Y ;
 IS:                           I S ;
+ISOPEN:                       I S O P E N;
 ISOLATION:                    I S O L A T I O N ;
 ISOLATION_LEVEL:              I S O L A T I O N '_' L E V E L ;
 ITERATE:                      I T E R A T E ;
@@ -2404,6 +2405,7 @@ FLOAT_FRAGMENT
 
 SINGLE_LINE_COMMENT: '--'  ~('\r' | '\n')* (NEWLINE | EOF)  -> channel(HIDDEN);
 MULTI_LINE_COMMENT:  '/*' .*? '*/'                          -> channel(HIDDEN);
+
 REM_COMMENT:          REM SPACE ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
 PROMPT_COMMENT:       PROMPT SPACE ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
 
