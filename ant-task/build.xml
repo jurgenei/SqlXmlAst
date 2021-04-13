@@ -3,7 +3,38 @@
         simple example build file using sqlxmlast task
         its taskdef is a bit complicated
     </description>
-    <property name="repo" location="C:/Users/cs79en.AD/.m2/repository"/>
+    <condition property="maven.local.repo" else="${user.home}/.m2/repository">
+        <isset property="maven.local.repo"/>
+    </condition>
+    <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
+        <classpath>
+            <fileset dir="${maven.local.repo}">
+                <include name="**/plsql-1.0-SNAPSHOT.jar"/>
+                <include name="**/tsql-1.0-SNAPSHOT.jar"/>
+                <include name="**/ant-task-1.0-SNAPSHOT.jar"/>
+                <include name="**/antlr4-runtime-4.7.2.jar"/>
+                <include name="**/commons-lang-2.5.jar"/>
+            </fileset>
+        </classpath>
+    </taskdef>
+    <target name="main">
+        <echo>local.repo = ${maven.local.repo}</echo>
+    </target>
+    <target name="oracle">
+        <sqlxmlast grammar="oracle"
+                   basedir="../plsql/examples"
+                   destdir="target/sqlxmlast/oracle"
+                   failontransformationerror="no">
+            <filename name="**/*.sql"/>
+        </sqlxmlast>
+    </target>
+    <!--
+            <classpath>
+            <pathelement location="${maven.local.repo}/nl/xs4all/home/ei/parsers/antlr/plsql/1.0-SNAPSHOT/plsql-1.0-SNAPSHOT.jar"/>
+            <pathelement location="${maven.local.repo}/nl/xs4all/home/ei/parsers/antlr/tsql/1.0-SNAPSHOT/tsql-1.0-SNAPSHOT.jar"/>
+            <pathelement location="${maven.local.repo}/nl/xs4all/home/ei/parsers/antlr/ant-task/1.0-SNAPSHOT/ant-task-1.0-SNAPSHOT.jar"/>
+            <pathelement location="${maven.local.repo}/org/antlr/antlr4-runtime/4.7.2/antlr4-runtime-4.7.2.jar"/>
+        </classpath>
     <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
         <classpath>
             <pathelement location="${repo}/nl/xs4all/home/ei/parsers/antlr/plsql/1.0-SNAPSHOT/plsql-1.0-SNAPSHOT.jar"/>
@@ -30,4 +61,5 @@
             <filename name="**/*.sql"/>
         </sqlxmlast>
     </target>
+    -->
 </project>
