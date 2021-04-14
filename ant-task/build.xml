@@ -1,8 +1,15 @@
-<project name="tsql" basedir=".">
-    <description>
-        simple example build file using sqlxmlast task
-        its taskdef is a bit complicated
-    </description>
+<project name="test.sqlxmlast" xmlns:au="antlib:org.apache.ant.antunit">
+    <property name="reports.antunit.dir" value="target/antunit"/>
+    <property name="destdir.oracle" value="target/sqlxmlast/oracle"/>
+    <property name="destdir.sybase" value="target/sqlxmlast/sybase"/>
+    <taskdef uri="antlib:org.apache.ant.antunit"
+             resource="org/apache/ant/antunit/antlib.xml">
+        <classpath>
+            <fileset dir="src/test/resources">
+                <include name="**/ant-antunit-1.4.jar"/>
+            </fileset>
+        </classpath>
+    </taskdef>
     <condition property="maven.local.repo" else="${user.home}/.m2/repository">
         <isset property="maven.local.repo"/>
     </condition>
@@ -17,49 +24,11 @@
             </fileset>
         </classpath>
     </taskdef>
-    <target name="main">
-        <echo>local.repo = ${maven.local.repo}</echo>
+    <target name="test">
+        <au:antunit>
+            <fileset file="test.xml"/>
+            <au:plainlistener/>
+            <au:logforwarder/>
+        </au:antunit>
     </target>
-    <target name="oracle">
-        <sqlxmlast grammar="oracle"
-                   basedir="../plsql/examples"
-                   destdir="target/sqlxmlast/oracle"
-                   failontransformationerror="no">
-            <filename name="**/*.sql"/>
-        </sqlxmlast>
-    </target>
-    <!--
-            <classpath>
-            <pathelement location="${maven.local.repo}/nl/xs4all/home/ei/parsers/antlr/plsql/1.0-SNAPSHOT/plsql-1.0-SNAPSHOT.jar"/>
-            <pathelement location="${maven.local.repo}/nl/xs4all/home/ei/parsers/antlr/tsql/1.0-SNAPSHOT/tsql-1.0-SNAPSHOT.jar"/>
-            <pathelement location="${maven.local.repo}/nl/xs4all/home/ei/parsers/antlr/ant-task/1.0-SNAPSHOT/ant-task-1.0-SNAPSHOT.jar"/>
-            <pathelement location="${maven.local.repo}/org/antlr/antlr4-runtime/4.7.2/antlr4-runtime-4.7.2.jar"/>
-        </classpath>
-    <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
-        <classpath>
-            <pathelement location="${repo}/nl/xs4all/home/ei/parsers/antlr/plsql/1.0-SNAPSHOT/plsql-1.0-SNAPSHOT.jar"/>
-            <pathelement location="${repo}/nl/xs4all/home/ei/parsers/antlr/tsql/1.0-SNAPSHOT/tsql-1.0-SNAPSHOT.jar"/>
-            <pathelement location="${repo}/nl/xs4all/home/ei/parsers/antlr/ant-task/1.0-SNAPSHOT/ant-task-1.0-SNAPSHOT.jar"/>
-            <pathelement location="${repo}/org/antlr/antlr4-runtime/4.7.1/antlr4-runtime-4.7.1.jar"/>
-            <pathelement location="${repo}/org/glassfish/jaxb/txw2/2.2.11/txw2-2.2.11.jar"/>
-            <pathelement location="${repo}/commons-lang/commons-lang/2.5/commons-lang-2.5.jar"/>
-        </classpath>
-    </taskdef>
-    <target name="oracle">
-       <sqlxmlast grammar="oracle" 
-       	          basedir="../plsql/examples"
-                  destdir="target/sqlxmlast/oracle"
-                  failontransformationerror="no">
-            <filename name="**/*.sql"/>
-        </sqlxmlast>
-    </target>
-    <target name="sybase">
-       <sqlxmlast grammar="sybase" 
-       	          basedir="../tsql/examples" 
-                  destdir="target/sqlxmlast/sybase"
-                  failontransformationerror="no">
-            <filename name="**/*.sql"/>
-        </sqlxmlast>
-    </target>
-    -->
 </project>

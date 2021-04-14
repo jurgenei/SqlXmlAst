@@ -1,0 +1,49 @@
+<project name="sqlxmlast" basedir="." xmlns:au="antlib:org.apache.ant.antunit">
+    <include file="build.xml" as="main"/>
+    <!--
+   clean task
+    -->
+    <target name="clean">
+        <delete dir="${destdir.oracle}"/>
+        <delete dir="${destdir.sybase}"/>
+    </target>
+    <!--
+   test setUp
+    -->
+    <target name="setUp" depends="clean">
+        <echo>setup</echo>
+    </target>
+    <!--
+      test oracle parser
+    -->
+    <target name="testOracle">
+        <au:assertFileDoesntExist file="${destdir.oracle}"/>
+        <sqlxmlast grammar="oracle"
+                   basedir="../plsql/examples"
+                   destdir="${destdir.oracle}"
+                   failontransformationerror="no">
+            <filename name="**/*.sql"/>
+        </sqlxmlast>
+        <au:assertFileExists file="${destdir.oracle}"/>
+    </target>
+
+    <!--
+    test sybase parser
+    -->
+    <target name="testSybase">
+        <au:assertFileDoesntExist file="${destdir.sybase}"/>
+        <sqlxmlast grammar="sybase"
+                   basedir="../tsql/examples"
+                   destdir="${destdir.sybase}"
+                   failontransformationerror="no">
+            <filename name="**/*.sql"/>
+        </sqlxmlast>
+        <au:assertFileExists file="${destdir.sybase}"/>
+    </target>
+    <!--
+   test tearDown
+    -->
+    <target name="tearDown" depends="clean">
+        <echo>tearDown</echo>
+    </target>
+</project>
