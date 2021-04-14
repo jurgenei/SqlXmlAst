@@ -13,16 +13,17 @@
     <condition property="maven.local.repo" else="${user.home}/.m2/repository">
         <isset property="maven.local.repo"/>
     </condition>
+    <path id="test_classpath">
+        <fileset dir="${maven.local.repo}">
+            <include name="**/plsql-1.0-SNAPSHOT.jar"/>
+            <include name="**/tsql-1.0-SNAPSHOT.jar"/>
+            <include name="**/ant-task-1.0-SNAPSHOT.jar"/>
+            <include name="**/antlr4-runtime-4.7.2.jar"/>
+            <include name="**/commons-lang-2.5.jar"/>
+        </fileset>
+    </path>
     <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
-        <classpath>
-            <fileset dir="${maven.local.repo}">
-                <include name="**/plsql-1.0-SNAPSHOT.jar"/>
-                <include name="**/tsql-1.0-SNAPSHOT.jar"/>
-                <include name="**/ant-task-1.0-SNAPSHOT.jar"/>
-                <include name="**/antlr4-runtime-4.7.2.jar"/>
-                <include name="**/commons-lang-2.5.jar"/>
-            </fileset>
-        </classpath>
+        <classpath refid="test_classpath"/>
     </taskdef>
     <target name="test">
         <au:antunit>

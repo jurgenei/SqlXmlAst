@@ -26,7 +26,6 @@
         </sqlxmlast>
         <au:assertFileExists file="${destdir.oracle}"/>
     </target>
-
     <!--
     test sybase parser
     -->
@@ -43,7 +42,7 @@
     <!--
    test tearDown
     -->
-    <target name="tearDown" depends="clean">
+    <target name="tearDown">
         <echo>tearDown</echo>
     </target>
 </project>
