@@ -1,16 +1,9 @@
 <project name="sqlxmlast" basedir="." xmlns:au="antlib:org.apache.ant.antunit">
     <include file="build.xml" as="main"/>
     <!--
-   clean task
-    -->
-    <target name="clean">
-        <delete dir="${destdir.oracle}"/>
-        <delete dir="${destdir.sybase}"/>
-    </target>
-    <!--
    test setUp
     -->
-    <target name="setUp" depends="clean">
+    <target name="setUp">
         <echo>setup</echo>
     </target>
     <!--

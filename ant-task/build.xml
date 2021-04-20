@@ -25,7 +25,11 @@
     <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
         <classpath refid="test_classpath"/>
     </taskdef>
-    <target name="test">
+    <target name="clean">
+        <delete dir="${destdir.oracle}"/>
+        <delete dir="${destdir.sybase}"/>
+    </target>
+    <target name="test" depends="clean">
         <au:antunit>
             <fileset file="test.xml"/>
             <au:plainlistener/>
