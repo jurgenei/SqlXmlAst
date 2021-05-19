@@ -10,6 +10,26 @@
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+    <profiles>
+        <profile>
+            <id>test.small</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <exampleFiles>examples</exampleFiles>
+            </properties>
+        </profile>
+        <profile>
+            <id>test.full</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <exampleFiles>examples.full/</exampleFiles>
+            </properties>
+        </profile>
+    </profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -39,7 +59,7 @@
 					<grammarName>TSql</grammarName>
 					<caseInsensitiveType>UPPER</caseInsensitiveType>
 					<packageName>nl.xs4all.home.ei.parsers.antlr</packageName>
-					<exampleFiles>examples/</exampleFiles>
+                    <exampleFiles>${exampleFiles}</exampleFiles>
 				</configuration>
 				<executions>
 					<execution>

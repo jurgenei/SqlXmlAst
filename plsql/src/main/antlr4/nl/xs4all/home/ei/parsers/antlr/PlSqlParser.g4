@@ -1733,7 +1733,7 @@ xmltype_storage
     ;
 
 xmlschema_spec
-    : (XMLSCHEMA DELIMITED_ID)? ELEMENT DELIMITED_ID
+    : (XMLSCHEMA delimited_id)? ELEMENT delimited_id
          (allow_or_disallow NONSCHEMA)?
          (allow_or_disallow ANYSCHEMA)?
     ;
@@ -4582,7 +4582,11 @@ identifier
 
 id_expression
     : regular_id
-    | DELIMITED_ID
+    | delimited_id
+    ;
+
+delimited_id
+    : DELIMITED_ID
     ;
 
 outer_join_sign
