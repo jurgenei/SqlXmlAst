@@ -1,5 +1,6 @@
 package nl.xs4all.home.ei.parsers.antlr;
 
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -17,6 +18,7 @@ public class XmlAstWriter {
 
     private String commentNS = "http://ei.home.xs4all.nl/sql/comments";
     private String grammarNS = "http://ei.home.xs4all.nl/sql/grammar";
+    private String tokenNS = "http://ei.home.xs4all.nl/sql/token";
     private final String grammar;
 
     private Class<Parser> parserClass;
@@ -25,12 +27,15 @@ public class XmlAstWriter {
 
     private XMLStreamWriter xmlStreamWriter;
     private List<String> ruleNames;
+
     private final List<String> ruleStack;
     private CommonTokenStream tokenStream;
     private final HashMap<Integer, Boolean> booleanHashMap;
 
     private Lexer lexer;
     private Parser parser;
+
+    private String keepSpace;
 
     // the casts are checked!
     @SuppressWarnings("unchecked")
@@ -69,50 +74,67 @@ public class XmlAstWriter {
         this.commentNS = commentNS;
     }
 
+    public String getTokenNS() {
+        return tokenNS;
+    }
+
+    public void setTokenNS(final String tokenNS) {
+        this.tokenNS = tokenNS;
+    }
+
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
 
         // set up parser chain
         final InputStream inputStream = new FileInputStream(inFile);
         final CharStream s = CharStreams.fromStream(inputStream);
         lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(s);
-        Arrays.asList(lexer.getRuleNames());
+
         tokenStream = new CommonTokenStream(lexer);
         parser = parserClass.getDeclaredConstructor(TokenStream.class).newInstance(tokenStream);
         parser.setErrorHandler(new BailErrorStrategy());
         ruleNames = Arrays.asList(parser.getRuleNames());
         final XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-        // xmlStreamWriter = new
-        // IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(new
-        // FileOutputStream(outFile)));
-        xmlStreamWriter = xmlof.createXMLStreamWriter(new FileOutputStream(outFile));
+
+        xmlStreamWriter = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(new
+                FileOutputStream(outFile)));
+        // xmlStreamWriter = xmlof.createXMLStreamWriter(new FileOutputStream(outFile));
 
         final ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
 
         // convert
         xmlStreamWriter.writeStartDocument();
-        xmlStreamWriter.writeCharacters("\n");
         xmlStreamWriter.writeStartElement("sql");
         xmlStreamWriter.writeDefaultNamespace(grammarNS);
         xmlStreamWriter.writeNamespace("c", commentNS);
+        xmlStreamWriter.writeNamespace("t", tokenNS);
         xmlStreamWriter.writeAttribute("grammar", grammar);
         xmlStreamWriter.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xmlStreamWriter.writeAttribute("numlines", Integer.toString(countLines(inFile)));
-        xmlStreamWriter.writeCharacters("\n");
         final ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(writer, (ParseTree) (parserClass.getMethod("sql_script")).invoke(parser));
-        xmlStreamWriter.writeCharacters("\n");
+        flushKeepSpace();
         xmlStreamWriter.writeEndElement();
         xmlStreamWriter.writeEndDocument();
         xmlStreamWriter.flush();
         xmlStreamWriter.close();
+    }
 
+    private void flushKeepSpace() throws XMLStreamException {
+        if (keepSpace != null) {
+            xmlStreamWriter.writeStartElement("c", "WS", commentNS);
+            writeChars(keepSpace);
+            xmlStreamWriter.writeEndElement();
+            keepSpace = null;
+        }
     }
 
     public String getRuleName(final ParserRuleContext ctx) {
         final int ruleIndex = ctx.getRuleIndex();
         String ruleName;
         if (ruleIndex >= 0 && ruleIndex < ruleNames.size()) {
-            ruleName = ruleNames.get(ruleIndex).replace('_', '-');
+            ruleName = ruleNames.get(ruleIndex);
+            // .replace('_', '-'); -> not doing this Jurgen,
+            // Makes it harder to convert XML2JSON
         } else {
             ruleName = "rule-" + ruleIndex;
         }
@@ -120,6 +142,7 @@ public class XmlAstWriter {
     }
 
     public void writeStartElement(final ParserRuleContext ctx) throws XMLStreamException {
+        flushKeepSpace();
         commentBefore(ctx);
         final String ruleName = getRuleName(ctx);
         xmlStreamWriter.writeStartElement("", ruleName, grammarNS);
@@ -136,9 +159,12 @@ public class XmlAstWriter {
         final String text = node.getText();
         final Token token = node.getSymbol();
 
+
+
         commentBefore(token);
         if (ruleStack.size() > 1 || !text.equals("<EOF>")) {
-            xmlStreamWriter.writeStartElement("", "t", grammarNS);
+            final String LexerRule = lexer.getVocabulary().getSymbolicName(token.getType());
+            xmlStreamWriter.writeStartElement("t", LexerRule, tokenNS);
             xmlStreamWriter.writeCharacters(text);
             xmlStreamWriter.writeEndElement();
         }
@@ -171,9 +197,25 @@ public class XmlAstWriter {
     }
 
     private void writeComment(final String comment, final String tagName) throws XMLStreamException {
-        xmlStreamWriter.writeStartElement("c", tagName, commentNS);
-        writeChars(comment);
-        xmlStreamWriter.writeEndElement();
+        if (tagName.equals("SPACES")) {
+            // defer output space until next open tag
+            String replaced = comment
+                    .replaceAll(" ", "_")
+                    .replaceAll("\n", "\\\\n")
+                    .replaceAll("\r", "\\\\r")
+                    .replaceAll("\t", "\\\\t");
+            keepSpace = replaced;
+            /*
+            xmlStreamWriter.writeStartElement("c", "WS", commentNS);
+            writeChars(replaced);
+            xmlStreamWriter.writeEndElement();
+            */
+        } else {
+            xmlStreamWriter.writeStartElement("c", tagName, commentNS);
+            writeChars(comment);
+            xmlStreamWriter.writeEndElement();
+        }
+
     }
 
     private void writeChars(final String s) throws XMLStreamException {

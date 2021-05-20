@@ -20,6 +20,7 @@
             <include name="**/ant-task-1.0-SNAPSHOT.jar"/>
             <include name="**/antlr4-runtime-4.7.2.jar"/>
             <include name="**/commons-lang-2.5.jar"/>
+            <include name="**/txw2-2.2.11.jar"/>
         </fileset>
     </path>
     <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
