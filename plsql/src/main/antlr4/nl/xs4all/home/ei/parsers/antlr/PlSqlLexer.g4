@@ -1,9 +1,10 @@
 /**
- * Oracle(c) PL/SQL 11g Parser
+ * Oracle(c) PL/SQL 12c Parser
  *
  * Copyright (c) 2009-2011 Alexandre Porcelli <alexandre.porcelli@gmail.com>
  * Copyright (c) 2015-2017 Ivan Kochurkin (KvanTTT, kvanttt@gmail.com, Positive Technologies).
  * Copyright (c) 2017 Mark Adams <madams51703@gmail.com>
+ * Copyright (c) 2021 Jurgen Hildebrand <ei@xs4all.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +20,6 @@
  */
 
 lexer grammar PlSqlLexer;
-//@lexer::header {package nl.xs4all.home.ei.parsers.antlr;}
 // JH: case independent lexer
 fragment A: [aA];
 fragment B: [bB];

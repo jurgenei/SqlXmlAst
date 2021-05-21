@@ -1,9 +1,10 @@
  /**
- * Oracle(c) PL/SQL 11g Parser
+ * Oracle(c) PL/SQL 12c Parser
  *
  * Copyright (c) 2009-2011 Alexandre Porcelli <alexandre.porcelli@gmail.com>
  * Copyright (c) 2015-2017 Ivan Kochurkin (KvanTTT, kvanttt@gmail.com, Positive Technologies).
  * Copyright (c) 2017      Mark Adams <madams51703@gmail.com>
+ * Copyright (c) 2021      Jurgen Hildebrand <ei@xs4all.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,32 +20,12 @@
  */
 
 parser grammar PlSqlParser;
-//@header {
-//    package nl.xs4all.home.ei.parsers.antlr;
-//}
+
 options { tokenVocab=PlSqlLexer; }
-
-
-// @members {boolean version12=true;}
 
 sql_script // toplevel name
     : ((unit_statement | sql_plus_command) SEMICOLON?)* EOF
     ;
-
-/*
-SEMICOLON
-    : SEMICOLON
-    ;
-LEFT_PAREN
-    : LEFT_PAREN
-    ;
-RIGHT_PAREN
-    : RIGHT_PAREN
-    ;
-COMMA
-    : COMMA
-    ;
-*/
 
 unit_statement
     : transaction_control_statements
@@ -69,12 +50,10 @@ unit_statement
     | associate_statistics
     | audit_traditional
     | unified_auditing
-
     | create_function_body
     | create_procedure_body
     | create_package
     | create_package_body
-
     | create_index
     | create_table
     | create_tablespace
@@ -85,12 +64,10 @@ unit_statement
     | create_materialized_view
     | create_materialized_view_log
     | create_user
-
     | create_sequence
     | create_trigger
     | create_type
     | create_synonym
-
     | drop_function
     | drop_package
     | drop_procedure
@@ -100,12 +77,9 @@ unit_statement
     | data_manipulation_language_statements
     | drop_table
     | drop_index
-
     | comment_on_column
     | comment_on_table
-
     | anonymous_block
-
     | grant_statement
     | procedure_call
     ;
@@ -3587,7 +3561,7 @@ truncate_table
     : TRUNCATE TABLE
     ;
 insert_statement
-    : insert=INSERT (single_table_insert | multi_table_insert)
+    : INSERT (single_table_insert | multi_table_insert)
     ;
 
 // Insert Specific Clauses
@@ -3619,11 +3593,11 @@ conditional_insert_else_part
 
 
 insert_into_clause
-    : into=INTO general_table_ref paren_column_list?
+    : INTO general_table_ref paren_column_list?
     ;
 
 values_clause
-    : values=VALUES LEFT_PAREN expressions? RIGHT_PAREN
+    : VALUES LEFT_PAREN expressions? RIGHT_PAREN
     ;
 
 merge_statement
@@ -3707,7 +3681,7 @@ error_logging_clause
     ;
 
 error_logging_into_part
-    : into=INTO tableview_name
+    : INTO tableview_name
     ;
 
 error_logging_reject_part
@@ -4724,7 +4698,7 @@ regular_id
     | REM // added jurgen
     ;
 
-non_reserved_keywords_in_12c
+fi
     : DOLLAR2_ID // added jurgen
     | ACL
     | ACTION
