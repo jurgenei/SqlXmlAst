@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="xml2json">
+    <target name="xml2json" depends="xml2json1,xml2json2"/>
+    <target name="xml2json1">
+        <xslt extension=".xml" basedir="target/sqlxmlast" destdir="target/sqljsonast"
+            style="src/main/stylesheets/xml2json1.xsl">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath location="C:/Users/cs79en/.m2/repository/net/sf/saxon/Saxon-HE/10.5/Saxon-HE-10.5.jar"/>
+            <include name="**/*.xml"/>
+        </xslt>
+    </target>
+    <target name="xml2json2">
+        <xslt extension=".json" basedir="target/sqljsonast" destdir="target/sqljsonast"
+            style="src/main/stylesheets/xml2json2.xsl">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath location="C:/Users/cs79en/.m2/repository/net/sf/saxon/Saxon-HE/10.5/Saxon-HE-10.5.jar"/>
+            <include name="**/*.xml"/>
+        </xslt>
+    </target>
+</project>
