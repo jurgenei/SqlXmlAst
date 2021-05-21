@@ -8,23 +8,13 @@
     <name>SqlXmlAst Project</name>
     <profiles>
         <profile>
+            <id>default.test</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <id>build.sql-grammars</id>
-            <modules>
-                <module>plsql</module>
-                <module>tsql</module>
-            </modules>
-        </profile>
-        <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <id>build.ant-task</id>
-            <modules>
-                <module>ant-task</module>
-            </modules>
+            <properties>
+                <exampleFiles>examples</exampleFiles>
+            </properties>
         </profile>
     </profiles>
     <properties>
@@ -40,6 +30,33 @@
             <version>${antlr.version}</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>txw2</artifactId>
+            <version>2.2.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-antunit</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>10.5</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -51,6 +68,57 @@
                     <source>${target.jvm}</source>
                     <target>${target.jvm}</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${antlr.version}</version>
+                <configuration>
+                    <visitor>false</visitor>
+                    <listener>true</listener>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>run-ant</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <target>
+                                <property name="maven_basedir" value="${project.basedir}" />
+                                <property name="compile_classpath" refid="maven.compile.classpath" />
+                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
+                                <property name="test_classpath" refid="maven.test.classpath" />
+                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="outputDir" value="${project.build.outputDirectory}" />
+                                <property name="sourceDir" value="${project.build.sourceDirectory}" />
+                                <ant antfile="src/test/ant/build.xml" >
+                                    <target name="test" />
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

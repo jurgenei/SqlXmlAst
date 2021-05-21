@@ -1,0 +1,22 @@
+<project name="test.sqlxmlast" xmlns:au="antlib:org.apache.ant.antunit" basedir="${maven_basedir}">
+    <property name="reports.antunit.dir" value="target/antunit"/>
+
+    <taskdef uri="antlib:org.apache.ant.antunit"
+             resource="org/apache/ant/antunit/antlib.xml" classpath="${test_classpath}"/>
+    <target name="clean">
+        <delete dir="target/sqlxmlast"/>
+    </target>
+    <target name="test" depends="clean">
+        <echo>test_classpath=${test_classpath}</echo>
+        <echo>basedir=${basedir}</echo>
+        <echo>start unit tests</echo>
+        <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask" classpath="${test_classpath}"/>
+        <au:antunit>
+            <fileset file="${basedir}/src/test/ant/test.xml"/>
+            <au:plainlistener/>
+            <au:logforwarder/>
+        </au:antunit>
+
+        <echo>end unit tests</echo>
+    </target>
+</project>
