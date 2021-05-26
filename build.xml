@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." name="xml2json">
+    <path id="cp">
+      <pathelement location="C:/Users/cs79en/.m2/repository/net/sf/saxon/Saxon-HE/10.5/Saxon-HE-10.5.jar" />
+       <pathelement location="target/classes"/>
+    </path>
+    <target name="xml2json" depends="xml-to-json-structure,json-structure-to-json"/>
+    <target name="xml-to-json-structure">
+        <xslt extension=".xml" basedir="target/sqlxmlast" destdir="target/sqljsonast"
+            style="src/main/stylesheets/json-structure-from-grammar.xsl" force="true">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="cp"/>
+            <include name="**/*.xml"/>
+        </xslt>
+    </target>
+    <target name="json-structure-to-json">
+        <xslt extension=".json" basedir="target/sqljsonast" destdir="target/sqljsonast"
+            style="src/main/stylesheets/json-structure-to-json.xsl">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="cp"/>
+            <include name="**/*.xml"/>
+        </xslt>
+    </target>
+    <target name="debug-shorten">
+        <xslt extension=".xml" basedir="target/sqlxmlast" destdir="target/debugast"
+              style="src/main/stylesheets/debug-shorten.xsl" force="true">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="cp"/>
+            <include name="**/*.xml"/>
+        </xslt>
+    </target>
+    <target name="clean">
+        <delete dir="target/sqljsonast"/>
+        <delete dir="target/debugast"/>
+    </target>
+    <target name="zip">
+        <zip destfile="target/xmljson-ast-samples.zip">
+            <zipfileset dir="examples" prefix="sql"/>
+            <zipfileset dir="target/sqlxmlast" prefix="xml"/>
+            <zipfileset dir="target/sqljsonast" prefix="json"/>
+            <zipfileset dir="src/main/antlr4/nl/xs4all/home/ei/parsers/antlr" prefix="grammars"/>
+            <zipfileset dir="src/main/stylesheets" prefix="xslt"/>
+        </zip>
+    </target>
+</project>

@@ -1,0 +1,57 @@
+<project name="sqlxmlast" xmlns:au="antlib:org.apache.ant.antunit" basedir="../../..">
+    <!--
+   test setUp
+    -->
+    <target name="setUp">
+        <echo>setup</echo>
+        <propertyset refid="test_context"/>
+        <echo>-- test_classpath=${test_classpath}</echo>
+        <echo>-- basedir=${basedir}</echo>
+    </target>
+
+    <target name="testOracle">
+        <property name="s1" value="examples/plsql"/>
+        <property name="d1" value="target/sqlxmlast/plsql"/>
+        <au:assertFileDoesntExist file="${d1}"/>
+        <sqlxmlast grammar="oracle"
+                   basedir="${s1}"
+                   destdir="${d1}"
+                   failontransformationerror="yes">
+            <filename name="**/*.sql"/>
+        </sqlxmlast>
+        <au:assertFileExists file="${d1}"/>
+    </target>
+    <target name="testSybase">
+        <property name="s2" value="examples/tsql"/>
+        <property name="d2" value="target/sqlxmlast/tsql"/>
+        <au:assertFileDoesntExist file="${d1}"/>
+        <sqlxmlast grammar="sybase"
+                   basedir="${s2}"
+                   destdir="${d2}"
+                   failontransformationerror="yes">
+            <filename name="**/*.sql"/>
+        </sqlxmlast>
+        <au:assertFileExists file="${d2}"/>
+    </target>
+
+    <target name="testJsonStructure">
+        <property name="sqlxmlast" value="${basedir}/target/sqlxmlast"/>
+        <property name="sqlxml4jsonast" value="${basedir}/target/sqlxml4jsonast"/>
+        <property name="sqljsonast" value="${basedir}/target/sqljsonast"/>
+        <xslt extension=".xml" basedir="${sqlxmlast}" destdir="${sqlxml4jsonast}"
+              style="${basedir}/src/main/stylesheets/json-structure-from-grammar.xsl"
+              classpath="${test_classpath}">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <include name="**/*.xml"/>
+        </xslt>
+        <xslt extension=".json" basedir="${sqlxml4jsonast}" destdir="${sqljsonast}"
+              style="${basedir}/src/main/stylesheets/json-structure-to-json.xsl"
+              classpath="${test_classpath}">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <include name="**/*.xml"/>
+        </xslt>
+    </target>
+    <target name="tearDown">
+        <echo>tearDown</echo>
+    </target>
+</project>

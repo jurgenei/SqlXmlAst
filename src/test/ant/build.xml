@@ -1,0 +1,43 @@
+<project name="test.sqlxmlast" xmlns:au="antlib:org.apache.ant.antunit" basedir="${maven_basedir}">
+    <property name="reports.antunit.dir" value="target/antunit"/>
+    <taskdef uri="antlib:org.apache.ant.antunit"
+             resource="org/apache/ant/antunit/antlib.xml" classpath="${test_classpath}"/>
+    <target name="clean">
+        <delete dir="target/sqlxmlast"/>
+        <delete dir="target/sqlxml4jsonast"/>
+        <delete dir="target/sqljsonast"/>
+    </target>
+    <target name="test" depends="clean">
+        <echo>test_classpath=${test_classpath}</echo>
+        <echo>basedir=${basedir}</echo>
+        <echo>start unit tests</echo>
+        <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask"
+                 classpath="${test_classpath}"/>
+        <au:antunit>
+            <fileset file="${basedir}/src/test/ant/test-sqlxmlast-task.xml"/>
+            <propertyset id="test_context">
+                <propertyref name="test_classpath"/>
+                <propertyref name="basedir"/>
+            </propertyset>
+            <au:plainlistener/>
+            <au:logforwarder/>
+        </au:antunit>
+        <!--
+        <echo>end unit tests</echo>
+        <echo>running testJsonStructure</echo>
+        <xslt extension=".xml" basedir="target/sqlxmlast" destdir="target/sqljsonast"
+              style="src/main/stylesheets/json-structure-from-grammar.xsl"
+              classpath="${test_classpath}">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <include name="**/*.xml"/>
+        </xslt>
+        <echo>running testJsonGenerate</echo>
+        <xslt extension=".json" basedir="target/sqljsonast" destdir="target/sqljsonast"
+              style="src/main/stylesheets/json-structure-to-json.xsl"
+              classpath="${test_classpath}">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <include name="**/*.xml"/>
+        </xslt>
+        -->
+    </target>
+</project>
