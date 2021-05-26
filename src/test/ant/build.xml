@@ -33,7 +33,7 @@
         </xslt>
         <echo>running testJsonGenerate</echo>
         <xslt extension=".json" basedir="target/sqljsonast" destdir="target/sqljsonast"
-              style="src/main/stylesheets/json-structure-to-json.xsl"
+              style="src/main/stylesheets/sqlxmlast-to-json.xsl"
               classpath="${test_classpath}">
             <factory name="net.sf.saxon.TransformerFactoryImpl"/>
             <include name="**/*.xml"/>

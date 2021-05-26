@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-shorten-single-element-nestings.xsl
+sqlxmlast-shorten.xsl
 
 Stylesheet to compress elements in sqlxml ast files
 The basic idea is to shorten nestings of single elements like
@@ -24,6 +24,9 @@ Jurgen Hildebrand (ei@xs4all.nl)
     exclude-result-prefixes="xs">
     <xsl:output method="xml" indent="yes"/>
     <xsl:strip-space elements="*"/>
+    <xsl:template match="/">
+        <xsl:apply-templates select="@* | g:sql" mode="shorten-single-element-nestings-copy"/>
+    </xsl:template>
     <!-- root -->
     <xsl:template match="/g:sql" priority="1" mode="shorten-single-element-nestings-copy">
         <xsl:copy>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-json-structure-to-json.xsl
+sqlxmlast-to-json.xsl
 
 Stylesheet to convert xml json representation into json format
 

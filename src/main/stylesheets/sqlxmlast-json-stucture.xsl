@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-json-stucture-build.xsl
+sqlxmlast-json-stucture.xsl
 
 Stylesheet to convert sqlxml syntax trees into a json representation
 using maps, arrays and strings
