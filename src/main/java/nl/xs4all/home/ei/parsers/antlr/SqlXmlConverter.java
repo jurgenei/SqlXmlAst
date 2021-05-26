@@ -12,9 +12,10 @@ public class SqlXmlConverter {
         switch(grammar) {
             case "oracle":
             case "sybase":
+            case "antlr4":
                 break;
             default:
-                throw new Exception("only oracle or sybase supported");
+                throw new Exception("only oracle, sybase or antlr4 supported");
         }
         this.grammar = grammar;
     }
@@ -23,11 +24,16 @@ public class SqlXmlConverter {
         XmlAstWriter xmlAstWriter;
         switch(grammar) {
             case "oracle":
-                 xmlAstWriter = new XmlAstWriter(PlSqlParser.class, PlSqlLexer.class, PlSqlWriter.class, grammar);
+                xmlAstWriter = new XmlAstWriter(PlSqlParser.class, PlSqlLexer.class, PlSqlWriter.class, grammar);
                 break;
             case "sybase":
-                 xmlAstWriter = new XmlAstWriter(TSqlParser.class,TSqlLexer.class,TSqlWriter.class, grammar);
+                xmlAstWriter = new XmlAstWriter(TSqlParser.class,TSqlLexer.class,TSqlWriter.class, grammar);
                 break;
+                /*
+            case "antlr4":
+                xmlAstWriter = new XmlAstWriter(ANTLRv4Parser.class,ANTLRv4Lexer.class,ANTLRv4Writer.class, grammar);
+                break;
+                 */
             default:
                 throw new Exception("only oracle or sybase supported");
         }
