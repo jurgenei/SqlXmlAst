@@ -31,10 +31,16 @@
         <doxslt extension=".json" basedir="target/sqlxmljson" destdir="target/jsonast"
             style="src/main/stylesheets/sqlxmlast-to-json.xsl"/>
     </target>
+    <target name="xmlsqlast-html">
+        <doxslt extension=".html" basedir="target/sqlxmlshort" destdir="target/html"
+                style="src/main/stylesheets/sqlxmlast-short-html.xsl"/>
+        <copy file="src/main/stylesheets/ft-syntax-highlight.css" tofile="target/html/ft-syntax-highlight.css"/>
+    </target>
     <target name="clean">
         <delete dir="target/sqlxmlshort"/>
         <delete dir="target/sqlxmljson"/>
         <delete dir="target/sqljsonast"/>
+        <delete dir="target/html"/>
     </target>
     <target name="zip">
         <zip destfile="target/xmljson-ast-samples.zip">

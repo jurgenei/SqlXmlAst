@@ -202,20 +202,17 @@ public class XmlAstWriter {
             // defer output space until next open tag
             String replaced = comment
                     .replaceAll(" ", "_")
-                    .replaceAll("\n", "\\\\n")
-                    .replaceAll("\r", "\\\\r")
-                    .replaceAll("\t", "\\\\t");
+                    .replaceAll("\n", "n")
+                    .replaceAll("\r", "r")
+                    .replaceAll("\t", "t");
             keepSpace = replaced;
             return;
         }
-
 
         // flushKeepSpace(); // in case space is pending
         xmlStreamWriter.writeStartElement("c", tagName, commentNS);
         writeChars(comment);
         xmlStreamWriter.writeEndElement();
-
-
     }
 
     private void writeChars(final String s) throws XMLStreamException {
