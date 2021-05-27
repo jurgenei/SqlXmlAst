@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-sqlxmlast-shorten.xsl
+sqlxmlast-short-html.xs
 
-Stylesheet to compress elements in sqlxml ast files
-The basic idea is to shorten nestings of single elements like
-
-<a><b><c>x</c></b></a>         becomes <c rule-path="a b">x</c>
-<a><b><c>x</c><d>y</d></b></a> becomes <b rule-path="a"><c>x</c><d>y</d></b></b>
-
-Since the grammar fo oracle is realy big and there are many cases of deep single
-element nestings the resulting xml/json AST files downstream are signicant smaller
-and also the queries on these AST's are a lot easier to formulate
+Render SQL AST in HTML showing syntax coloring
 
 Jurgen Hildebrand (ei@xs4all.nl)
-25052021
+25052027
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema" version="3.0"
