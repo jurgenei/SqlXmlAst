@@ -109,7 +109,7 @@ Jurgen Hildebrand (ei@xs4all.nl)
                     <xsl:value-of select="'column_name'"/>
                 </xsl:when>
                 <!-- TODO: this one is way to generic -->
-                <xsl:when test="ancestor::g:select_statement[1]">
+                <xsl:when test="ancestor::g:data_manipulation_language_statements[1]">
                     <xsl:value-of select="'column_name'"/>
                 </xsl:when>
                 <xsl:otherwise>

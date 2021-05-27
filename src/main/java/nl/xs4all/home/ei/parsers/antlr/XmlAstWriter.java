@@ -159,8 +159,7 @@ public class XmlAstWriter {
         final String text = node.getText();
         final Token token = node.getSymbol();
 
-
-
+        flushKeepSpace();
         commentBefore(token);
         if (ruleStack.size() > 1 || !text.equals("<EOF>")) {
             final String LexerRule = lexer.getVocabulary().getSymbolicName(token.getType());
@@ -197,6 +196,8 @@ public class XmlAstWriter {
     }
 
     private void writeComment(final String comment, final String tagName) throws XMLStreamException {
+
+
         if (tagName.equals("SPACES")) {
             // defer output space until next open tag
             String replaced = comment
@@ -205,16 +206,15 @@ public class XmlAstWriter {
                     .replaceAll("\r", "\\\\r")
                     .replaceAll("\t", "\\\\t");
             keepSpace = replaced;
-            /*
-            xmlStreamWriter.writeStartElement("c", "WS", commentNS);
-            writeChars(replaced);
-            xmlStreamWriter.writeEndElement();
-            */
-        } else {
-            xmlStreamWriter.writeStartElement("c", tagName, commentNS);
-            writeChars(comment);
-            xmlStreamWriter.writeEndElement();
+            return;
         }
+
+
+        // flushKeepSpace(); // in case space is pending
+        xmlStreamWriter.writeStartElement("c", tagName, commentNS);
+        writeChars(comment);
+        xmlStreamWriter.writeEndElement();
+
 
     }
 
