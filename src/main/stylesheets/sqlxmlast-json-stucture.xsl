@@ -66,6 +66,11 @@ Jurgen Hildebrand (ei@xs4all.nl)
                     <xsl:value-of select="@rule-path"/>
                 </string>
             </xsl:if>
+            <xsl:if test="@object-type">
+                <string key="object-type">
+                    <xsl:value-of select="@object-type"/>
+                </string>
+            </xsl:if>
             <array key="{local-name(.)}">
                 <xsl:apply-templates mode="#current"/>
             </array>
