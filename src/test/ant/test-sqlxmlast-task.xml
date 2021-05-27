@@ -1,4 +1,18 @@
 <project name="sqlxmlast" xmlns:au="antlib:org.apache.ant.antunit" basedir="../../..">
+    <macrodef name="doxslt">
+        <attribute name="extension" default=".xml"/>
+        <attribute name="basedir" default="target/sqlxmlast"/>
+        <attribute name="destdir" default="target/sqlxmlshort"/>
+        <attribute name="style" default="src/main/stylesheets/sqlxmlast-shorten.xsl"/>
+        <sequential>
+            <xslt extension="@{extension}" basedir="@{basedir}" destdir="@{destdir}"
+                  style="@{style}">
+                <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+                <classpath refid="cp"/>
+                <include name="**/*.xml"/>
+            </xslt>
+        </sequential>
+    </macrodef>
     <!--
    test setUp
     -->
@@ -36,16 +50,24 @@
 
     <target name="testJsonStructure">
         <property name="sqlxmlast" value="${basedir}/target/sqlxmlast"/>
-        <property name="sqlxml4jsonast" value="${basedir}/target/sqlxml4jsonast"/>
-        <property name="sqljsonast" value="${basedir}/target/sqljsonast"/>
-        <xslt extension=".xml" basedir="${sqlxmlast}" destdir="${sqlxml4jsonast}"
-              style="${basedir}/src/main/stylesheets/json-structure-from-grammar.xsl"
+        <property name="sqlxmlshort" value="${basedir}/target/sqlxmlshort"/>
+        <property name="sqlxmljson" value="${basedir}/target/sqlxmljson"/>
+        <property name="jsonast" value="${basedir}/target/jsonast"/>
+
+        <xslt extension=".xml" basedir="${sqlxmlast}" destdir="${sqlxmlshort}"
+              style="src/main/stylesheets/sqlxmlast-shorten.xsl"
               classpath="${test_classpath}">
             <factory name="net.sf.saxon.TransformerFactoryImpl"/>
             <include name="**/*.xml"/>
         </xslt>
-        <xslt extension=".json" basedir="${sqlxml4jsonast}" destdir="${sqljsonast}"
-              style="${basedir}/src/main/stylesheets/json-structure-to-json.xsl"
+        <xslt extension=".xml" basedir="${sqlxmlshort}" destdir="${sqlxmljson}"
+              style="src/main/stylesheets/sqlxmlast-json-stucture.xsl"
+              classpath="${test_classpath}">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <include name="**/*.xml"/>
+        </xslt>
+        <xslt extension=".json" basedir="${sqlxmljson}" destdir="${jsonast}"
+              style="src/main/stylesheets/sqlxmlast-to-json.xsl"
               classpath="${test_classpath}">
             <factory name="net.sf.saxon.TransformerFactoryImpl"/>
             <include name="**/*.xml"/>

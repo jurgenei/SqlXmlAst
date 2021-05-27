@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-json-stucture-build.xsl
+sqlxmlast-json-stucture.xsl
 
 Stylesheet to convert sqlxml syntax trees into a json representation
 using maps, arrays and strings
@@ -64,6 +64,11 @@ Jurgen Hildebrand (ei@xs4all.nl)
             <xsl:if test="@rule-path">
                 <string key="rule-path">
                     <xsl:value-of select="@rule-path"/>
+                </string>
+            </xsl:if>
+            <xsl:if test="@object-type">
+                <string key="object-type">
+                    <xsl:value-of select="@object-type"/>
                 </string>
             </xsl:if>
             <array key="{local-name(.)}">
