@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." name="xml2json">
-    <path id="cp">
-       <pathelement location="C:/Users/cs79en/.m2/repository/net/sf/saxon/Saxon-HE/10.5/Saxon-HE-10.5.jar" />
+<project basedir="." name="xml2json" default="all">
+    <!--
+      20210529 Jurgen Hildebrand (ei@xs4all.nl)
+      example syntax tree processing pipeline
+      using local build / local repo
+      -->
+    <!-- declarations -->
+    <property name="m2repo" value="${user.home}/.m2/repository"/>
+    <path id="saxon.cp">
+        <fileset dir="${m2repo}">
+            <include name="**/Saxon-HE-10.5.jar"/>
+        </fileset>
        <pathelement location="target/classes"/>
     </path>
-    <target name="xml2json" depends="xmlsqlast-shorten,xmlsqlast-json-structure,json-structure-to-json"/>
+    <path id="sqlxmlast.cp">
+        <fileset dir="${m2repo}">
+            <include name="**/antlr4-runtime-4.9.1.jar"/>
+            <include name="**/commons-lang-2.5.jar"/>
+            <include name="**/txw2-2.2.11.jar"/>
+        </fileset>
+        <pathelement location="target/classes"/>
+    </path>
+    <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
+        <classpath refid="sqlxmlast.cp"/>
+    </taskdef>
     <macrodef name="doxslt">
         <attribute name="extension" default=".xml"/>
         <attribute name="basedir" default="target/sqlxmlast"/>
@@ -14,34 +33,51 @@
             <xslt extension="@{extension}" basedir="@{basedir}" destdir="@{destdir}"
                   style="@{style}">
                 <factory name="net.sf.saxon.TransformerFactoryImpl"/>
-                <classpath refid="cp"/>
+                <classpath refid="saxon.cp"/>
                 <include name="**/*.xml"/>
             </xslt>
         </sequential>
     </macrodef>
+    <!--
+    Tasks
+      -->
+    <target name="all" depends="sqlxmlast-to-xml,xmlsqlast-shorten,xmlsqlast-json-structure,json-structure-to-json"/>
+    <!-- convert SQL to XML -->
+    <target name="sqlxmlast-to-xml">
+        <sqlxmlast grammar="oracle" extension=".xml" basedir="examples/plsql" destdir="target/sqlxmlast/plsql"/>
+        <sqlxmlast grammar="sybase" extension=".xml" basedir="examples/tsql" destdir="target/sqlxmlast/tsql"/>
+    </target>
+    <!-- make XML compacter form -->
     <target name="xmlsqlast-shorten">
         <doxslt extension=".xml" basedir="target/sqlxmlast" destdir="target/sqlxmlshort"
               style="src/main/stylesheets/sqlxmlast-shorten.xsl"/>
     </target>
+    <!-- make prepare JSON conversion by translation of
+         generic XML elements/attrs into object, array and string types elements -->
     <target name="xmlsqlast-json-structure">
         <doxslt extension=".xml" basedir="target/sqlxmlshort" destdir="target/sqlxmljson"
             style="src/main/stylesheets/sqlxmlast-json-stucture.xsl"/>
     </target>
+    <!-- convert JSON stuctured XML into JSON -->
     <target name="json-structure-to-json">
         <doxslt extension=".json" basedir="target/sqlxmljson" destdir="target/jsonast"
             style="src/main/stylesheets/sqlxmlast-to-json.xsl"/>
     </target>
+    <!-- short form in syntax colored XML -->
     <target name="xmlsqlast-html">
         <doxslt extension=".html" basedir="target/sqlxmlshort" destdir="target/html"
                 style="src/main/stylesheets/sqlxmlast-short-html.xsl"/>
         <copy file="src/main/stylesheets/ft-syntax-highlight.css" tofile="target/html/ft-syntax-highlight.css"/>
     </target>
+    <!-- clean directories with intermediate results -->
     <target name="clean">
+        <delete dir="target/sqlxmlast"/>
         <delete dir="target/sqlxmlshort"/>
         <delete dir="target/sqlxmljson"/>
         <delete dir="target/sqljsonast"/>
         <delete dir="target/html"/>
     </target>
+    <!-- zip results for those who are interested -->
     <target name="zip">
         <zip destfile="target/xmljson-ast-samples.zip">
             <zipfileset dir="examples" prefix="sql"/>
@@ -49,6 +85,7 @@
             <zipfileset dir="target/sqlxmlshort" prefix="sqlxmlshort"/>
             <zipfileset dir="target/sqlxmljson" prefix="sqlxmljson"/>
             <zipfileset dir="target/sqljsonast" prefix="sqljsonast"/>
+            <zipfileset dir="target/html" prefix="html"/>
             <zipfileset dir="src/main/antlr4/nl/xs4all/home/ei/parsers/antlr" prefix="grammars"/>
             <zipfileset dir="src/main/stylesheets" prefix="xslt"/>
         </zip>
