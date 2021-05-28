@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="xml2json.defs">
+    <!--
+      20210529 Jurgen Hildebrand (ei@xs4all.nl)
+      definitions syntax tree processing pipeline
+      using local build / local repo
+      -->
+    <!-- props -->
+    <property name="m2repo" value="${user.home}/.m2/repository"/>
+    <property name="classes" value="${user.dir}/target/classes"/>
+    <!-- paths -->
+    <path id="saxon.cp">
+        <fileset dir="${m2repo}">
+            <include name="**/Saxon-HE-10.5.jar"/>
+        </fileset>
+       <pathelement location="${classes}"/>
+    </path>
+    <path id="sqlxmlast.cp">
+        <fileset dir="${m2repo}">
+            <include name="**/antlr4-runtime-4.9.1.jar"/>
+            <include name="**/commons-lang-2.5.jar"/>
+            <include name="**/txw2-2.2.11.jar"/>
+        </fileset>
+        <pathelement location="${classes}"/>
+    </path>
+    <!-- task definitions -->
+    <taskdef name="sqlxmlast" classname="nl.xs4all.home.ei.parsers.antlr.SqlXmlAstAntTask">
+        <classpath refid="sqlxmlast.cp"/>
+    </taskdef>
+    <macrodef name="doxslt">
+        <attribute name="extension" default=".xml"/>
+        <attribute name="basedir" default="target/sqlxmlast"/>
+        <attribute name="destdir" default="target/sqlxmlshort"/>
+        <attribute name="style" default="src/main/stylesheets/sqlxmlast-shorten.xsl"/>
+        <sequential>
+            <xslt extension="@{extension}" basedir="@{basedir}" destdir="@{destdir}"
+                  style="@{style}">
+                <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+                <classpath refid="saxon.cp"/>
+                <include name="**/*.xml"/>
+            </xslt>
+        </sequential>
+    </macrodef>
+</project>
