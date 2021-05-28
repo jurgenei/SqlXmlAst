@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." name="xml2json" default="all">
-    <!--
-      20210529 Jurgen Hildebrand (ei@xs4all.nl)
-      example syntax tree processing pipeline
-      using local build / local repo
-      -->
+<!--
+  20210529 Jurgen Hildebrand (ei@xs4all.nl)
+      example sqlxmlast/xslt3
+      SQL parsing/processing pipeline
+  This is an example ant build.xml file
+      You can only run below ant tasks after
+      having build this project with maven
+-->
     <import file="build.defs.xml"/>
     <!--
     Tasks
