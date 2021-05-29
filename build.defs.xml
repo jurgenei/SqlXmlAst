@@ -34,7 +34,9 @@
         <attribute name="style" default="src/main/stylesheets/sqlxmlast-shorten.xsl"/>
         <sequential>
             <xslt extension="@{extension}" basedir="@{basedir}" destdir="@{destdir}"
-                  style="@{style}">
+                  style="@{style}"
+                  failOnError="false" failOnTransformationError="false"
+                  failOnNoResources="false">
                 <factory name="net.sf.saxon.TransformerFactoryImpl"/>
                 <classpath refid="saxon.cp"/>
                 <include name="**/*.xml"/>

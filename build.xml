@@ -56,7 +56,7 @@
             <zipfileset dir="target/sqlxmlast" prefix="sqlxmlast"/>
             <zipfileset dir="target/sqlxmlshort" prefix="sqlxmlshort"/>
             <zipfileset dir="target/sqlxmljson" prefix="sqlxmljson"/>
-            <zipfileset dir="target/sqljsonast" prefix="sqljsonast"/>
+            <zipfileset dir="target/jsonast" prefix="jsonast"/>
             <zipfileset dir="target/html" prefix="html"/>
             <zipfileset dir="src/main/antlr4/nl/xs4all/home/ei/parsers/antlr" prefix="grammars"/>
             <zipfileset dir="src/main/stylesheets" prefix="xslt"/>
