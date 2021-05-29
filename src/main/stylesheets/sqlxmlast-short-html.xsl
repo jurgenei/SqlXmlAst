@@ -20,7 +20,17 @@ Jurgen Hildebrand (ei@xs4all.nl)
     <xsl:template match="/g:sql">
         <html>
             <head>
-                <link rel="stylesheet" href="../ft-syntax-highlight.css"/>
+                <xsl:variable name="rel-path">
+                    <xsl:analyze-string select="@path" regex="(.*/[^/]+)">
+                        <xsl:matching-substring>
+                            <xsl:value-of select="replace(regex-group(1),'[^/]+','..')" />
+                        </xsl:matching-substring>
+                        <xsl:non-matching-substring>
+                            <xsl:value-of select="'..'" />
+                        </xsl:non-matching-substring>
+                    </xsl:analyze-string>
+                </xsl:variable>
+                <link rel="stylesheet" href="{$rel-path}/ft-syntax-highlight.css"/>
                 <title>
                     <xsl:value-of select="@path"/>
                 </title>
