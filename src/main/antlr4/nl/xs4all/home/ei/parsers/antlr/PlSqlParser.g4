@@ -3038,6 +3038,7 @@ goto_statement
     : GOTO label_name
     ;
 
+// Jurgen added body part (IF () BEGIN .. END ELSE BEGIN .. END should be valid)
 if_statement
     : IF condition THEN seq_of_statements elsif_part* else_part? END IF
     ;
@@ -3133,8 +3134,9 @@ trigger_block
     : (DECLARE? declare_spec+)? body
     ;
 
+/* changed cardinality for declare_spec from + to * an empty DECLARE is obvious valid Jurgen */
 block
-    : DECLARE? declare_spec+ body
+    : DECLARE? declare_spec* body
     ;
 
 // SQL Statements
@@ -3246,6 +3248,7 @@ seq_of_statements
     | delete_statement
     | insert_statement
     | lock_table_statement
+    | lock_table_statement
     | merge_statement
     | explain_statement
 //    | case_statement[true]
@@ -3293,10 +3296,10 @@ subquery_basic_elements
 subquery_operation_part
     : (UNION ALL? | INTERSECT | MINUS) subquery_basic_elements
     ;
-// jurgen added fetch clause
+// jurgen added fetch clause (and order by)
 query_block
     : selector (ASTERISK | (COMMA? selected_element)+)
-      into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause? fetch_clause?
+      into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause? order_by_clause? fetch_clause?
     ;
 
 selector

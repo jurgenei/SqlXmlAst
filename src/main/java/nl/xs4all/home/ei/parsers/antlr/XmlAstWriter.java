@@ -12,6 +12,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
 import java.util.*;
+import java.nio.file.Files;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 
 public class XmlAstWriter {
 
@@ -82,6 +86,19 @@ public class XmlAstWriter {
         this.tokenNS = tokenNS;
     }
 
+    public static String stripInvalidXMLCharacters(String in) {
+        // XML 1.0
+        // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+        String xml10pattern =
+                "[^" +
+                "\u0009\r\n" +
+                "\u0020-\uD7FF" +
+                "\uE000-\uFFFD" +
+                "\ud800\udc00-\udbff\udfff" +
+        "]";
+        return in.replaceAll(xml10pattern, "");
+    }
+
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
 
         // set up parser chain
@@ -95,14 +112,20 @@ public class XmlAstWriter {
         ruleNames = Arrays.asList(parser.getRuleNames());
         final XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 
-        xmlStreamWriter = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(new
-                FileOutputStream(outFile)));
-        // xmlStreamWriter = xmlof.createXMLStreamWriter(new FileOutputStream(outFile));
+        File tmpFile = new File(outFile.getAbsolutePath() + ".tmp");
+
+
+
+        OutputStream os = new ByteArrayOutputStream();
+        xmlStreamWriter = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(os, "UTF-8"));
+
+
 
         final ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
-
+        // Preserve memory
+        parser.setBuildParseTree(false);
         // convert
-        xmlStreamWriter.writeStartDocument();
+        xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
         xmlStreamWriter.writeStartElement("sql");
         xmlStreamWriter.writeDefaultNamespace(grammarNS);
         xmlStreamWriter.writeNamespace("c", commentNS);
@@ -117,6 +140,12 @@ public class XmlAstWriter {
         xmlStreamWriter.writeEndDocument();
         xmlStreamWriter.flush();
         xmlStreamWriter.close();
+
+        BufferedWriter bwr = new BufferedWriter(new FileWriter(outFile));
+        bwr.write(os.toString());
+        bwr.flush();
+        bwr.close();
+
     }
 
     private void flushKeepSpace() throws XMLStreamException {
@@ -202,20 +231,17 @@ public class XmlAstWriter {
             // defer output space until next open tag
             String replaced = comment
                     .replaceAll(" ", "_")
-                    .replaceAll("\n", "\\\\n")
-                    .replaceAll("\r", "\\\\r")
-                    .replaceAll("\t", "\\\\t");
+                    .replaceAll("\n", "n")
+                    .replaceAll("\r", "r")
+                    .replaceAll("\t", "t");
             keepSpace = replaced;
             return;
         }
 
-
         // flushKeepSpace(); // in case space is pending
         xmlStreamWriter.writeStartElement("c", tagName, commentNS);
-        writeChars(comment);
+        writeChars(stripInvalidXMLCharacters(comment));
         xmlStreamWriter.writeEndElement();
-
-
     }
 
     private void writeChars(final String s) throws XMLStreamException {
