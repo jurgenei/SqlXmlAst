@@ -20,9 +20,9 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class XmlAstWriter {
 
 
-    private String commentNS = "http://ei.home.xs4all.nl/sql/comments";
-    private String grammarNS = "http://ei.home.xs4all.nl/sql/grammar";
-    private String tokenNS = "http://ei.home.xs4all.nl/sql/token";
+    private String commentNS = "urn:language:sql:comment";
+    private String grammarNS = "urn:language:sql:grammar";
+    private String tokenNS = "urn:language:sql:token";
     private final String grammar;
 
     private Class<Parser> parserClass;
@@ -123,7 +123,7 @@ public class XmlAstWriter {
 
         final ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
         // Preserve memory
-        parser.setBuildParseTree(false);
+        // parser.setBuildParseTree(false);
         // convert
         xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
         xmlStreamWriter.writeStartElement("sql");
