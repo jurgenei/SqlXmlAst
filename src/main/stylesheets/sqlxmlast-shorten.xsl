@@ -30,9 +30,6 @@ Jurgen Hildebrand (ei@xs4all.nl)
             <xsl:apply-templates select="@* | g:sql" mode="label-tree"/>
         </xsl:variable>
         <xsl:apply-templates select="$label-tree" mode="shorten-single-element-nestings-copy"/>
-        <!--
-        <xsl:apply-templates select="@* | g:sql" mode="label-tree"/>
-        -->
     </xsl:template>
     <!-- root -->
     <xsl:template match="g:sql" priority="1" mode="shorten-single-element-nestings-copy">

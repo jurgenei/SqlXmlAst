@@ -3313,10 +3313,15 @@ selected_element
 from_clause
     : FROM table_ref_list
     ;
-
+/*
+20210606 Jurgen this creates weird lists
 select_list_elements
     : tableview_name PERIOD ASTERISK
     | (regular_id PERIOD)? expressions
+    ;
+*/
+select_list_elements
+    : expressions
     ;
 
 table_ref_list
@@ -4167,6 +4172,7 @@ schema_name
     : identifier
     ;
 
+
 routine_name
     : identifier (PERIOD id_expression)* (AT_SIGN link_name)?
     ;
@@ -4432,8 +4438,10 @@ bind_variable
       (PERIOD general_element_part)*
     ;
 
+// added ASTERISK 20210606
+// Jurgen
 general_element
-    : general_element_part (PERIOD general_element_part)*
+    : (general_element_part|ASTERISK) (PERIOD general_element_part)*
     ;
 
 general_element_part
