@@ -3306,8 +3306,15 @@ selector
     : SELECT (DISTINCT | UNIQUE | ALL)?
     ;
 
+/*
+0210606 Jurgen this creates weird lists
 selected_element
     : select_list_elements column_alias?
+    ;
+*/
+
+selected_element
+    : select_list_elements
     ;
 
 from_clause
@@ -3723,9 +3730,20 @@ seed_part
 condition
     : expression
     ;
-
+/*
+Aliases can be assigned to entire exprssions
+Jurgen 20210607
 expressions
     : expression (COMMA expression)*
+    ;
+*/
+
+expressions
+    : aliased_expression (COMMA aliased_expression)*
+    ;
+
+aliased_expression
+    : expression column_alias?
     ;
 
 expression

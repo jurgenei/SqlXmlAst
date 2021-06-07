@@ -90,6 +90,9 @@ Jurgen Hildebrand (ei@xs4all.nl)
             <xsl:variable name="selected_parent" select="local-name(ancestor::g:*[local-name(.) = $candidate_ancestors][1])"/>
             <xsl:attribute name="object-type">
             <xsl:choose>
+                <xsl:when test="$selected_parent eq 'column_alias'">
+                    <xsl:value-of select="'column_alias_def'"/>
+                </xsl:when>
                 <xsl:when test="$selected_parent">
                    <xsl:value-of select="$selected_parent"/>
                 </xsl:when>
