@@ -3306,17 +3306,29 @@ selector
     : SELECT (DISTINCT | UNIQUE | ALL)?
     ;
 
+/*
+0210606 Jurgen this creates weird lists
 selected_element
     : select_list_elements column_alias?
+    ;
+*/
+
+selected_element
+    : select_list_elements
     ;
 
 from_clause
     : FROM table_ref_list
     ;
-
+/*
+20210606 Jurgen this creates weird lists
 select_list_elements
     : tableview_name PERIOD ASTERISK
     | (regular_id PERIOD)? expressions
+    ;
+*/
+select_list_elements
+    : expressions
     ;
 
 table_ref_list
@@ -3718,9 +3730,20 @@ seed_part
 condition
     : expression
     ;
-
+/*
+Aliases can be assigned to entire exprssions
+Jurgen 20210607
 expressions
     : expression (COMMA expression)*
+    ;
+*/
+
+expressions
+    : aliased_expression (COMMA aliased_expression)*
+    ;
+
+aliased_expression
+    : expression column_alias?
     ;
 
 expression
@@ -4167,6 +4190,7 @@ schema_name
     : identifier
     ;
 
+
 routine_name
     : identifier (PERIOD id_expression)* (AT_SIGN link_name)?
     ;
@@ -4432,8 +4456,10 @@ bind_variable
       (PERIOD general_element_part)*
     ;
 
+// added ASTERISK 20210606
+// Jurgen
 general_element
-    : general_element_part (PERIOD general_element_part)*
+    : (general_element_part|ASTERISK) (PERIOD general_element_part)*
     ;
 
 general_element_part

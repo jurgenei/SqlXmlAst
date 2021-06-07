@@ -30,9 +30,6 @@ Jurgen Hildebrand (ei@xs4all.nl)
             <xsl:apply-templates select="@* | g:sql" mode="label-tree"/>
         </xsl:variable>
         <xsl:apply-templates select="$label-tree" mode="shorten-single-element-nestings-copy"/>
-        <!--
-        <xsl:apply-templates select="@* | g:sql" mode="label-tree"/>
-        -->
     </xsl:template>
     <!-- root -->
     <xsl:template match="g:sql" priority="1" mode="shorten-single-element-nestings-copy">
@@ -93,6 +90,9 @@ Jurgen Hildebrand (ei@xs4all.nl)
             <xsl:variable name="selected_parent" select="local-name(ancestor::g:*[local-name(.) = $candidate_ancestors][1])"/>
             <xsl:attribute name="object-type">
             <xsl:choose>
+                <xsl:when test="$selected_parent eq 'column_alias'">
+                    <xsl:value-of select="'column_alias_def'"/>
+                </xsl:when>
                 <xsl:when test="$selected_parent">
                    <xsl:value-of select="$selected_parent"/>
                 </xsl:when>
