@@ -81,6 +81,12 @@
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr.version}</version>
                 <configuration>
+                    <!--
+                    <includes>
+                        <include>*Lexer.g4</include>
+                        <include>*Parser.g4</include>
+                    </includes>
+                    -->
                     <visitor>false</visitor>
                     <listener>true</listener>
                 </configuration>
