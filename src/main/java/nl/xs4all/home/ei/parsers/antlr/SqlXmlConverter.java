@@ -12,7 +12,8 @@ public class SqlXmlConverter {
         switch(grammar) {
             case "oracle":
             case "sybase":
-            case "antlr4":
+            // case "antlr4":
+            case "java8":
                 break;
             default:
                 throw new Exception("only oracle, sybase or antlr4 supported");
@@ -28,6 +29,9 @@ public class SqlXmlConverter {
                 break;
             case "sybase":
                 xmlAstWriter = new XmlAstWriter(TSqlParser.class,TSqlLexer.class,TSqlWriter.class, grammar);
+                break;
+            case "java8":
+                xmlAstWriter = new XmlAstWriter(Java8Parser.class,Java8Lexer.class,Java8Writer.class, grammar);
                 break;
                 /*
             case "antlr4":
