@@ -15,8 +15,8 @@
         </fileset>
     </path>
     <path id="sqlxmlast.cp">
+        <pathelement location="target/classes"/>
         <fileset dir="${m2repo}">
-            <include name="**/sqlxmlast-1.0-SNAPSHOT.jar"/>
             <include name="**/antlr4-runtime-4.9.1.jar"/>
             <include name="**/commons-lang-2.5.jar"/>
             <include name="**/txw2-2.2.11.jar"/>
