@@ -78,14 +78,14 @@ Jurgen Hildebrand (ei@xs4all.nl)
         'table_alias','tableview_name','column_alias',
         'procedure_name','parameter_name',
         'type_spec','variable_declaration','variable_name',
-        'routine_name')" as="xs:string*"/>
+        'routine_name','execute_immediate','function_argument')" as="xs:string*"/>
 
     <xsl:template match="@*|node()" mode="label-tree">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()" mode="#current"/>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="g:regular_id" mode="label-tree">
+    <xsl:template match="g:regular_id[not(../../following-sibling::g:function_argument)]" mode="label-tree">
         <xsl:copy>
             <xsl:variable name="selected_parent" select="local-name(ancestor::g:*[local-name(.) = $candidate_ancestors][1])"/>
             <xsl:attribute name="object-type">
@@ -120,6 +120,40 @@ Jurgen Hildebrand (ei@xs4all.nl)
             <xsl:apply-templates select="@*|node()" mode="#current"/>
         </xsl:copy>
     </xsl:template>
-
+    <xsl:template match="g:regular_id[../../following-sibling::g:function_argument]" mode="label-tree">
+        <xsl:copy>
+            <xsl:variable name="selected_parent" select="local-name(ancestor::g:*[local-name(.) = $candidate_ancestors][1])"/>
+            <xsl:attribute name="object-type">
+                <xsl:choose>
+                    <xsl:when test="$selected_parent eq 'column_alias'">
+                        <xsl:value-of select="'column_alias_def'"/>
+                    </xsl:when>
+                    <xsl:when test="$selected_parent">
+                        <xsl:value-of select="$selected_parent"/>
+                    </xsl:when>
+                    <xsl:when test="following-sibling::element()[1]/self::t:PERIOD">
+                        <xsl:value-of select="'package_ref'"/>
+                    </xsl:when>
+                    <xsl:when test="ancestor::g:id_expression[1]/following-sibling::element()[1]/self::t:PERIOD">
+                        <xsl:value-of select="'package_ref'"/>
+                    </xsl:when>
+                    <xsl:when test="ancestor::g:id_expression[1]/preceding-sibling::element()[1]/self::t:PERIOD">
+                        <xsl:value-of select="'function_name'"/>
+                    </xsl:when>
+                    <xsl:when test="ancestor::g:expressions[1]/preceding-sibling::element()[1]/self::t:PERIOD">
+                        <xsl:value-of select="'function_name'"/>
+                    </xsl:when>
+                    <!-- TODO: this one is way to generic -->
+                    <xsl:when test="ancestor::g:data_manipulation_language_statements[1]">
+                        <xsl:value-of select="'function_name'"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="''"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
 </xsl:stylesheet>
 
