@@ -60,7 +60,7 @@ options {
  * Productions from §3 (Lexical Structure)
  */
 sql_script
-    : compilationUnit EOF
+    : compilationUnit? EOF
     ;
 
 literal

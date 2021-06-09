@@ -262,6 +262,8 @@ public class XmlAstWriter {
     }
 
     private void commentAfter(final ParserRuleContext ctx) throws XMLStreamException {
+        if (ctx.getStop() == null)
+            return; // empty file has no tokens
         processComments(tokenStream.getHiddenTokensToRight(ctx.getStop().getTokenIndex()));
     }
 
