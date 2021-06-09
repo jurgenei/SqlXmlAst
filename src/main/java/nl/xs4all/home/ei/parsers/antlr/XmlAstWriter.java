@@ -12,13 +12,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
 import java.util.*;
-import java.nio.file.Files;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 
 public class XmlAstWriter {
-
 
     private String commentNS = "urn:language:sql:comment";
     private String grammarNS = "urn:language:sql:grammar";
@@ -60,6 +55,7 @@ public class XmlAstWriter {
         booleanHashMap = new HashMap<>();
         ruleStack = new ArrayList<>();
         grammar = g;
+
     }
 
     public String getgrammarNS() {
@@ -91,11 +87,11 @@ public class XmlAstWriter {
         // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
         String xml10pattern =
                 "[^" +
-                "\u0009\r\n" +
-                "\u0020-\uD7FF" +
-                "\uE000-\uFFFD" +
-                "\ud800\udc00-\udbff\udfff" +
-        "]";
+                        "\u0009\r\n" +
+                        "\u0020-\uD7FF" +
+                        "\uE000-\uFFFD" +
+                        "\ud800\udc00-\udbff\udfff" +
+                        "]";
         return in.replaceAll(xml10pattern, "");
     }
 
@@ -104,22 +100,35 @@ public class XmlAstWriter {
         // set up parser chain
         final InputStream inputStream = new FileInputStream(inFile);
         final CharStream s = CharStreams.fromStream(inputStream);
-        lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(s);
 
+        // try garbage collect to prevent clogging the heap
+        // when converting many files we are running
+        // out of memory, gc/sleep is a try to prevent this
+        System.gc();
+        Thread.sleep(100);
+
+        lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(s);
         tokenStream = new CommonTokenStream(lexer);
         parser = parserClass.getDeclaredConstructor(TokenStream.class).newInstance(tokenStream);
+
+        // renewing this does not seem to matter
+        // When parsing a huge number of files heap chokes
+        // https://stackoverflow.com/questions/28724334/antlr4-memory-cleanup
+        // ... If I replace the cache of the parser and lexer, there is no more path between these
+        // data structures and some static fields. Therefore the garbage collector can collect them.
+        // lexer.setInterpreter(
+        //        new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA,
+        //               new PredictionContextCache()));
+        // parser.setInterpreter(
+        //        new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA,
+        //                new PredictionContextCache()));
+
         parser.setErrorHandler(new BailErrorStrategy());
         ruleNames = Arrays.asList(parser.getRuleNames());
         final XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 
-        File tmpFile = new File(outFile.getAbsolutePath() + ".tmp");
-
-
-
         OutputStream os = new ByteArrayOutputStream();
         xmlStreamWriter = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(os, "UTF-8"));
-
-
 
         final ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
         // Preserve memory
