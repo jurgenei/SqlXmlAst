@@ -16,10 +16,12 @@
     <target name="all" depends="sqlxmlast-to-xml,xmlsqlast-shorten,xmlsqlast-json-structure,json-structure-to-json"/>
     <!-- convert misc formats to XML AST -->
     <target name="sqlxmlast-to-xml">
+        <!--
         <sqlxmlast grammar="oracle" extension=".xml" basedir="examples/plsql" destdir="target/sqlxmlast/plsql"/>
         <sqlxmlast grammar="sybase" extension=".xml" basedir="examples/tsql" destdir="target/sqlxmlast/tsql"/>
-        <sqlxmlast grammar="java8" extension=".xml" basedir="examples/java8" destdir="target/sqlxmlast/java8"/>
         <sqlxmlast grammar="antlr4" extension=".xml" basedir="examples/antlr4" destdir="target/sqlxmlast/antlr4"/>
+        -->
+        <sqlxmlast grammar="java8" extension=".xml" basedir="examples/java8" destdir="target/sqlxmlast/java8"/>
     </target>
     <!-- make XML compacter form -->
     <target name="xmlsqlast-shorten">
