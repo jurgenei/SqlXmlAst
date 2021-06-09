@@ -401,7 +401,7 @@ object_under_part
     ;
 
 nested_table_type_def
-    : TABLE OF type_spec (NOT NULL)?
+    : TABLE OF type_spec null_constraint?
     ;
 
 sqlj_object_type
@@ -1292,9 +1292,13 @@ object_view_clause
        ( LEFT_PAREN ( COMMA? (out_of_line_constraint | REGULAR_ID inline_constraint ) )+ RIGHT_PAREN )*
     ;
 
+null_constraint
+    : NOT? NULL
+    ;
+
 inline_constraint
     : (CONSTRAINT constraint_name)?
-        ( NOT? NULL
+        ( null_constraint
         | UNIQUE
         | PRIMARY KEY
         | references_clause
@@ -1969,7 +1973,7 @@ lob_partitioning_storage
 datatype_null_enable
    : column_name datatype
          SORT?  (DEFAULT expression)? (ENCRYPT ( USING  CHAR_STRING )? (IDENTIFIED BY REGULAR_ID)? CHAR_STRING? ( NO? SALT )? )?
-         (NOT NULL)? (ENABLE | DISABLE)?
+         null_constraint? (ENABLE | DISABLE)?
    ;
 
 //Technically, this should only allow 'K' | 'M' | 'G' | 'T' | 'P' | 'E'
@@ -2926,11 +2930,11 @@ declare_spec
 
 // incorporates constant_declaration
 variable_declaration
-    : identifier CONSTANT? type_spec (NOT NULL)? default_value_part? SEMICOLON
+    : identifier CONSTANT? type_spec null_constraint? default_value_part? SEMICOLON
     ;
 
 subtype_declaration
-    : SUBTYPE identifier IS type_spec (RANGE expression '..' expression)? (NOT NULL)? SEMICOLON
+    : SUBTYPE identifier IS type_spec (RANGE expression '..' expression)? null_constraint? SEMICOLON
     ;
 
 // cursor_declaration incorportates curscursor_body and cursor_spec
@@ -2964,7 +2968,7 @@ record_type_def
     ;
 
 field_spec
-    : column_name type_spec? (NOT NULL)? default_value_part?
+    : column_name type_spec? null_constraint? default_value_part?
     ;
 
 ref_cursor_type_def
@@ -2976,7 +2980,7 @@ type_declaration
     ;
 
 table_type_def
-    : TABLE OF type_spec table_indexed_by_part? (NOT NULL)?
+    : TABLE OF type_spec table_indexed_by_part? null_constraint?
     ;
 
 table_indexed_by_part
@@ -2984,7 +2988,7 @@ table_indexed_by_part
     ;
 
 varray_type_def
-    : (VARRAY | VARYING ARRAY) LEFT_PAREN expression RIGHT_PAREN OF type_spec (NOT NULL)?
+    : (VARRAY | VARYING ARRAY) LEFT_PAREN expression RIGHT_PAREN OF type_spec null_constraint?
     ;
 
 // Statements
