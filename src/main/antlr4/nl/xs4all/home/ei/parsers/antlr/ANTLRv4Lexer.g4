@@ -47,20 +47,20 @@ options { superClass = LexerAdaptor; }
 
 // Standard set of fragments
 tokens { TOKEN_REF , RULE_REF , LEXER_CHAR_SET }
-channels { OFF_CHANNEL , COMMENT }
+// channels { OFF_CHANNEL , COMMENT }
 
 // -------------------------
 // Comments
 DOC_COMMENT
-   : DocComment -> channel (COMMENT)
+   : DocComment -> channel (HIDDEN)
    ;
 
-BLOCK_COMMENT
-   : BlockComment -> channel (COMMENT)
+MULTI_LINE_COMMENT
+   : BlockComment -> channel (HIDDEN)
    ;
 
-LINE_COMMENT
-   : LineComment -> channel (COMMENT)
+SINGLE_LINE_COMMENT
+   : LineComment -> channel (HIDDEN)
    ;
 
 // -------------------------
@@ -273,9 +273,13 @@ ID
    // -------------------------
    // Whitespace
 
+/*
 WS
    : Ws+ -> channel (OFF_CHANNEL)
    ;
+*/
+
+SPACES: Ws+ -> channel(HIDDEN);
 
 // -------------------------
 // Illegal Characters

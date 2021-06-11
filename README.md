@@ -49,7 +49,7 @@ XmlSqlASt can generate XML:
      numlines="6">
    <c:MULTI_LINE_COMMENT>/* simple table alias - self join
    from: https://www.oracletutorial.com/oracle-basics/oracle-alias/ */</c:MULTI_LINE_COMMENT>
-   <sql_script>
+   <script>
       <c:WS>\n</c:WS>
       <query_block rule-path="unit_statement data_manipulation_language_statements select_statement subquery subquery_basic_elements">
          <selector>
@@ -151,7 +151,7 @@ XmlSqlASt can generate XML:
          </from_clause>
       </query_block>
       <t:SEMICOLON>;</t:SEMICOLON>
-   </sql_script>
+   </script>
 </sql>
 ```
 Additional styling can be applied to generate JSON using included XSLT stylesheets:  
@@ -165,7 +165,7 @@ Additional styling can be applied to generate JSON using included XSLT styleshee
     [ 
       { "multi_line_comment" : "\/* simple table alias - self join\n   from: https:\/\/www.oracletutorial.com\/oracle-basics\/oracle-alias\/ *\/" },
       
-      { "sql_script" : 
+      { "script" : 
         [ 
           { "whitespace" : "\\n" },
           

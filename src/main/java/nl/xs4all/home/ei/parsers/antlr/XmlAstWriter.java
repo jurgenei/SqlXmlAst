@@ -15,9 +15,9 @@ import java.util.*;
 
 public class XmlAstWriter {
 
-    private String commentNS = "urn:language:sql:comment";
-    private String grammarNS = "urn:language:sql:grammar";
-    private String tokenNS = "urn:language:sql:token";
+    private String commentNS = "urn:xmlast:comment";
+    private String grammarNS = "urn:xmlast:grammar";
+    private String tokenNS = "urn:xmlast:token";
     private final String grammar;
 
     private Class<Parser> parserClass;
@@ -135,7 +135,7 @@ public class XmlAstWriter {
         // parser.setBuildParseTree(false);
         // convert
         xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
-        xmlStreamWriter.writeStartElement("sql");
+        xmlStreamWriter.writeStartElement("ast"); // document element
         xmlStreamWriter.writeDefaultNamespace(grammarNS);
         xmlStreamWriter.writeNamespace("c", commentNS);
         xmlStreamWriter.writeNamespace("t", tokenNS);
@@ -143,7 +143,7 @@ public class XmlAstWriter {
         xmlStreamWriter.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xmlStreamWriter.writeAttribute("numlines", Integer.toString(countLines(inFile)));
         final ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(writer, (ParseTree) (parserClass.getMethod("sql_script")).invoke(parser));
+        walker.walk(writer, (ParseTree) (parserClass.getMethod("script")).invoke(parser));
         flushKeepSpace();
         xmlStreamWriter.writeEndElement();
         xmlStreamWriter.writeEndDocument();

@@ -33,7 +33,7 @@ parser grammar TSqlParser;
 options { tokenVocab=TSqlLexer; }
 
 
-sql_script // toplevel name
+script // toplevel name
     : batch* EOF
     ;
 

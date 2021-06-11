@@ -17,9 +17,9 @@ Jurgen Hildebrand (ei@xs4all.nl)
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" version="3.0"
-    xmlns:g="urn:language:sql:grammar" 
-    xmlns:c="urn:language:sql:comment"
-    xmlns:t="urn:language:sql:token"
+    xmlns:g="urn:xmlast:grammar"
+    xmlns:c="urn:xmlast:comment"
+    xmlns:t="urn:xmlast:token"
     xmlns="http://www.w3.org/2005/xpath-functions"
     exclude-result-prefixes="xs">
     <xsl:output method="xml" indent="yes"/>
@@ -27,12 +27,12 @@ Jurgen Hildebrand (ei@xs4all.nl)
 
     <xsl:template match="/">
         <xsl:variable name="label-tree" as="node()*">
-            <xsl:apply-templates select="@* | g:sql" mode="label-tree"/>
+            <xsl:apply-templates select="@* | g:ast" mode="label-tree"/>
         </xsl:variable>
         <xsl:apply-templates select="$label-tree" mode="shorten-single-element-nestings-copy"/>
     </xsl:template>
     <!-- root -->
-    <xsl:template match="g:sql" priority="1" mode="shorten-single-element-nestings-copy">
+    <xsl:template match="g:ast" priority="1" mode="shorten-single-element-nestings-copy">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()" mode="shorten-single-element-nestings-copy"/>
         </xsl:copy>
