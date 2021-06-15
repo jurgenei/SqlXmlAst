@@ -235,6 +235,8 @@ public class XmlAstWriter {
 
     private void writeComment(final String comment, final String tagName) throws XMLStreamException {
 
+        // if there is any space pending get rid of it
+        flushKeepSpace();
 
         if (tagName.equals("SPACES")) {
             // defer output space until next open tag

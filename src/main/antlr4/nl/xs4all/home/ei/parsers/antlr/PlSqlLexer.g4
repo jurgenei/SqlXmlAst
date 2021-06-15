@@ -2403,11 +2403,11 @@ FLOAT_FRAGMENT
 
 // Rule #097 <COMMENT>
 
-SINGLE_LINE_COMMENT: '--'  ~('\r' | '\n')* (NEWLINE | EOF)  -> channel(HIDDEN);
-MULTI_LINE_COMMENT:  '/*' .*? '*/' (SPACES)? EOF? -> channel(HIDDEN);
+SINGLE_LINE_COMMENT: '--'  ~('\r' | '\n')*  -> channel(HIDDEN);
+MULTI_LINE_COMMENT:  '/*' .*? '*/' -> channel(HIDDEN);
 
-REM_COMMENT:          REM SPACE ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
-PROMPT_COMMENT:       PROMPT SPACE ~('\r' | '\n')* (NEWLINE | EOF)   -> channel(HIDDEN);
+REM_COMMENT:          REM SPACE ~('\r' | '\n')*  -> channel(HIDDEN);
+PROMPT_COMMENT:       PROMPT SPACE ~('\r' | '\n')*  -> channel(HIDDEN);
 
 START_CMD
     // TODO When using full word START there is a conflict with START WITH in sequences and CONNECT BY queries
