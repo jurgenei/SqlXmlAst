@@ -102,6 +102,12 @@ Jurgen Hildebrand (ei@xs4all.nl)
                 <xsl:when test="ancestor::g:id_expression[1]/following-sibling::element()[1]/self::t:PERIOD">
                     <xsl:value-of select="'table_alias_ref'"/>
                 </xsl:when>
+                <xsl:when test="ancestor::g:identifier[1]/following-sibling::element()[1]/self::t:PERIOD">
+                    <xsl:value-of select="'table_alias_ref'"/>
+                </xsl:when>
+
+
+
                 <xsl:when test="ancestor::g:id_expression[1]/preceding-sibling::element()[1]/self::t:PERIOD">
                     <xsl:value-of select="'column_name'"/>
                 </xsl:when>
