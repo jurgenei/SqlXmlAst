@@ -9,9 +9,9 @@ Jurgen Hildebrand (ei@xs4all.nl)
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema" version="3.0"
-                xmlns:g="urn:language:sql:grammar"
-                xmlns:c="urn:language:sql:comment"
-                xmlns:t="urn:language:sql:token"
+                xmlns:g="urn:xmlast:grammar"
+                xmlns:c="urn:xmlast:comment"
+                xmlns:t="urn:xmlast:token"
                 xmlns:fn="http://www.w3.org/2005/xpath-functions"
                 exclude-result-prefixes="xs g c t fn">
     <xsl:output method="html" indent="yes"/>

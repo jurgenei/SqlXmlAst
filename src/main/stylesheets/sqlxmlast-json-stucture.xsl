@@ -9,15 +9,15 @@ Jurgen Hildebrand (ei@xs4all.nl)
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xs="http://www.w3.org/2001/XMLSchema" version="3.0"
-                xmlns:g="urn:language:sql:grammar"
-                xmlns:c="urn:language:sql:comment"
-                xmlns:t="urn:language:sql:token"
+                xmlns:g="urn:xmlast:grammar"
+                xmlns:c="urn:xmlast:comment"
+                xmlns:t="urn:xmlast:token"
                 xmlns="http://www.w3.org/2005/xpath-functions"
                 exclude-result-prefixes="xs g c t">
     <xsl:output method="xml" indent="yes"/>
     <xsl:strip-space elements="*"/>
     <!-- convert AST trees to JSON -->
-    <xsl:template match="g:sql" priority="1">
+    <xsl:template match="g:ast" priority="1">
         <map xmlns="http://www.w3.org/2005/xpath-functions">
             <map key="head">
                 <xsl:for-each select="@*">

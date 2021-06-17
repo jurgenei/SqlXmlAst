@@ -23,7 +23,7 @@ parser grammar PlSqlParser;
 
 options { tokenVocab=PlSqlLexer; }
 
-sql_script // toplevel name
+script // toplevel name
     : ((unit_statement | sql_plus_command) SEMICOLON?)* EOF
     ;
 

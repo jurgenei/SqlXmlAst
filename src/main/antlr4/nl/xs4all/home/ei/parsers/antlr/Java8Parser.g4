@@ -59,7 +59,7 @@ options {
 /*
  * Productions from §3 (Lexical Structure)
  */
-sql_script
+script
     : compilationUnit? EOF
     ;
 
@@ -197,33 +197,25 @@ wildcardBounds
  */
 
 packageName
-	:	Identifier
-	|	packageName '.' Identifier
+	:	generalName
 	;
 
 typeName
-	:	Identifier
-	|	packageOrTypeName '.' Identifier
-	;
-
-packageOrTypeName
-	:	Identifier
-	|	packageOrTypeName '.' Identifier
+	:	generalName
 	;
 
 expressionName
-	:	Identifier
-	|	ambiguousName '.' Identifier
+	:	generalName
+	;
+
+generalName
+	:	Identifier ('.' Identifier)*
 	;
 
 methodName
 	:	Identifier
 	;
 
-ambiguousName
-	:	Identifier
-	|	ambiguousName '.' Identifier
-	;
 
 /*
  * Productions from §7 (Packages)
@@ -253,7 +245,7 @@ singleTypeImportDeclaration
 	;
 
 typeImportOnDemandDeclaration
-	:	'import' packageOrTypeName '.' '*' ';'
+	:	'import' generalName '.' '*' ';'
 	;
 
 singleStaticImportDeclaration
