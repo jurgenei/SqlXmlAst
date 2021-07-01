@@ -114,8 +114,16 @@ Jurgen Hildebrand (ei@xs4all.nl)
                 <xsl:when test="ancestor::g:expressions[1]/preceding-sibling::element()[1]/self::t:PERIOD">
                     <xsl:value-of select="'column_name'"/>
                 </xsl:when>
+                <xsl:when test="ancestor::g:label_name">
+                    <xsl:value-of select="'column_alias_def'"/>
+                </xsl:when>
+
                 <!-- TODO: this one is way to generic -->
                 <xsl:when test="ancestor::g:data_manipulation_language_statements[1]">
+                    <xsl:value-of select="'column_name'"/>
+                </xsl:when>
+                <!-- TODO: this one is way to generic -->
+                <xsl:when test="ancestor::g:create_view">
                     <xsl:value-of select="'column_name'"/>
                 </xsl:when>
                 <xsl:otherwise>
