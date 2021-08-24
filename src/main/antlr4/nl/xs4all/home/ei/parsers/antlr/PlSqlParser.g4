@@ -1959,7 +1959,7 @@ partitioning_storage_clause
       | key_compression
       | lob_partitioning_storage
       | VARRAY varray_item STORE AS (BASICFILE | SECUREFILE)? LOB lob_segname
-      | SEGMENT CREATION IMMEDIATE /* 20210826 Jurgen Added */
+      | SEGMENT CREATION IMMEDIATE /* 20210824 Jurgen Added */
       )+
     ;
 
@@ -1989,7 +1989,7 @@ table_compression
         | FOR ( OLTP
               | (QUERY | ARCHIVE) (LOW | HIGH)?
               )
-        )?
+        )? (NO INMEMORY)? /* Added Jurgen 20210824 */
     | NOCOMPRESS
     ;
 
