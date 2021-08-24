@@ -1369,7 +1369,7 @@ PROCESS:                      P R O C E S S ;
 PROFILE:                      P R O F I L E ;
 PROGRAM:                      P R O G R A M ;
 PROJECT:                      P R O J E C T ;
-PROMPT:                       P R O M P T;
+PROMPT:                       P R O M P T?;
 PROPAGATE:                    P R O P A G A T E ;
 PROTECTED:                    P R O T E C T E D ;
 PROTECTION:                   P R O T E C T I O N ;
