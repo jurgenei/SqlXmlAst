@@ -1959,6 +1959,7 @@ partitioning_storage_clause
       | key_compression
       | lob_partitioning_storage
       | VARRAY varray_item STORE AS (BASICFILE | SECUREFILE)? LOB lob_segname
+      | SEGMENT CREATION IMMEDIATE /* 20210826 Jurgen Added */
       )+
     ;
 
