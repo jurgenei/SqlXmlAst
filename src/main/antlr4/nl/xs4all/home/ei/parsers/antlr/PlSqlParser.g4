@@ -2747,7 +2747,7 @@ end_time_column
 
 column_definition
     : column_name (datatype | type_name)
-         (COLLATE USING_NLS_COMP)? /* added Jurgen 20210824 */
+         (COLLATE (USING_NLS_COMP|DELIMITED_ID))? /* added Jurgen 20210824 */
          SORT?  (DEFAULT expression)?
          (ENCRYPT (USING  CHAR_STRING)?
          (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?
