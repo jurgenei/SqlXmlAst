@@ -1769,7 +1769,7 @@ object_table_substitution
 
 relational_table
     : (LEFT_PAREN relational_properties RIGHT_PAREN)?
-      (DEFAULT COLLATION USING_NLS_COMP) /* added Jurgen 20210824 */
+      (DEFAULT COLLATION USING_NLS_COMP)? /* added Jurgen 20210824 */
       (ON COMMIT (DELETE | PRESERVE) ROWS)?
       physical_properties? column_properties? table_partitioning_clauses?
       (CACHE | NOCACHE)? (RESULT_CACHE LEFT_PAREN MODE (DEFAULT | FORCE) RIGHT_PAREN)?
