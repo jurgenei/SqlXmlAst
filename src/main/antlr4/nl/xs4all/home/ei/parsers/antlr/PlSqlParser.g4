@@ -1769,6 +1769,7 @@ object_table_substitution
 
 relational_table
     : (LEFT_PAREN relational_properties RIGHT_PAREN)?
+      (DEFAULT COLLATION USING_NLS_COMP)? /* added Jurgen 20210824 */
       (ON COMMIT (DELETE | PRESERVE) ROWS)?
       physical_properties? column_properties? table_partitioning_clauses?
       (CACHE | NOCACHE)? (RESULT_CACHE LEFT_PAREN MODE (DEFAULT | FORCE) RIGHT_PAREN)?
@@ -1959,6 +1960,7 @@ partitioning_storage_clause
       | key_compression
       | lob_partitioning_storage
       | VARRAY varray_item STORE AS (BASICFILE | SECUREFILE)? LOB lob_segname
+      | SEGMENT CREATION IMMEDIATE /* 20210824 Jurgen Added */
       )+
     ;
 
@@ -1988,7 +1990,7 @@ table_compression
         | FOR ( OLTP
               | (QUERY | ARCHIVE) (LOW | HIGH)?
               )
-        )?
+        )? (NO INMEMORY)? /* Added Jurgen 20210824 */
     | NOCOMPRESS
     ;
 
@@ -2745,10 +2747,14 @@ end_time_column
 
 column_definition
     : column_name (datatype | type_name)
-         SORT?  (DEFAULT expression)? (ENCRYPT (USING  CHAR_STRING)? (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?  (inline_constraint* | inline_ref_constraint ) (identity_spec inline_constraint?)?
+         (COLLATE (USING_NLS_COMP|DELIMITED_ID))? /* added Jurgen 20210824 */
+         SORT?  (DEFAULT expression)?
+         (ENCRYPT (USING  CHAR_STRING)?
+         (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?
+         (inline_constraint* | inline_ref_constraint ) (identity_spec inline_constraint?)?
     ;
 identity_spec
-    : GENERATED (BY DEFAULT (ON NULL)?|ALWAYS) AS IDENTITY (sequence_start_clause|sequence_spec)+
+    : GENERATED (BY DEFAULT (ON NULL)?|ALWAYS) AS IDENTITY (sequence_start_clause|sequence_spec)*
     ;
 
 
