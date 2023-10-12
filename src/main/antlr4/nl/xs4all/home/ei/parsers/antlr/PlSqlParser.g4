@@ -1270,8 +1270,15 @@ alter_view_editionable
  // jurgen added EDITIONABLE 20190401
 create_view
     : CREATE (OR REPLACE)? (OR? FORCE)? (EDITIONING|EDITIONABLE)? VIEW
-      tableview_name view_options?
-      AS subquery subquery_restriction_clause?
+      tableview_name view_options? collation?
+      AS withtimeas? subquery subquery_restriction_clause?
+    ;
+
+withtimeas
+    : WITH TIMES AS
+    ;
+collation
+    : DEFAULT COLLATION using_nls_comp
     ;
 
 view_options
@@ -1769,7 +1776,7 @@ object_table_substitution
 
 relational_table
     : (LEFT_PAREN relational_properties RIGHT_PAREN)?
-      (DEFAULT COLLATION USING_NLS_COMP)? /* added Jurgen 20210824 */
+      (DEFAULT COLLATION using_nls_comp)?  /* added Jurgen 20210824 -- Jaap 20230405 -- Jurgen 20231012 solved by new rule */
       (ON COMMIT (DELETE | PRESERVE) ROWS)?
       physical_properties? column_properties? table_partitioning_clauses?
       (CACHE | NOCACHE)? (RESULT_CACHE LEFT_PAREN MODE (DEFAULT | FORCE) RIGHT_PAREN)?
@@ -1998,8 +2005,14 @@ physical_attributes_clause
     : (PCTFREE pctfree=UNSIGNED_INTEGER
       | PCTUSED pctused=UNSIGNED_INTEGER
       | INITRANS inittrans=UNSIGNED_INTEGER
+      | MAXTRANS maxtrans=UNSIGNED_INTEGER
       | storage_clause
+      | columnstore_clause
       )+
+    ;
+
+columnstore_clause
+    : COLUMN STORE COMPRESS FOR QUERY LOW NO ROW LEVEL LOCKING LOGGING
     ;
 
 storage_clause
@@ -2014,6 +2027,7 @@ storage_clause
          | OPTIMAL (size_clause | NULL )
          | BUFFER_POOL (KEEP | RECYCLE | DEFAULT)
          | FLASH_CACHE (KEEP | NONE | DEFAULT)
+         | CELL_FLASH_CACHE (KEEP | NONE | DEFAULT)
          | ENCRYPT
          )+
        RIGHT_PAREN
@@ -2036,6 +2050,7 @@ physical_properties
 
 row_movement_clause
     : (ENABLE | DISABLE)? ROW MOVEMENT
+    ( CLUSTERING BY LINEAR ORDER LEFT_PAREN (COMMA? field_spec)+ RIGHT_PAREN (YES|NO) ON LOAD (YES|NO) ON DATA MOVEMENT WITHOUT MATERIALIZED ZONEMAP )?   // Jaap 2023-04-05
     ;
 
 flashback_archive_clause
@@ -2745,9 +2760,13 @@ end_time_column
     : column_name
     ;
 
+using_nls_comp
+    : USING_NLS_COMP
+    | DELIMITED_ID
+    ;
 column_definition
     : column_name (datatype | type_name)
-         (COLLATE (USING_NLS_COMP|DELIMITED_ID))? /* added Jurgen 20210824 */
+         (COLLATE using_nls_comp)? /* added Jurgen 20210824 - changed delimited_id Jaap 202300405 - Jurgen 20231012 solved by new rule */
          SORT?  (DEFAULT expression)?
          (ENCRYPT (USING  CHAR_STRING)?
          (IDENTIFIED BY regular_id)? CHAR_STRING? (NO? SALT)? )?
