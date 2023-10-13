@@ -19,7 +19,7 @@
     </profiles>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <target.jvm>1.8</target.jvm>
+        <target.jvm>17</target.jvm>
         <antlr.version>4.9.1</antlr.version>
         <antlr4test-maven-plugin.version>1.10</antlr4test-maven-plugin.version>
     </properties>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.10.1</version>
+            <version>1.10.11</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>txw2</artifactId>
-            <version>2.2.11</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>10.5</version>
+            <version>12.3</version>
         </dependency>
     </dependencies>
     <build>
@@ -101,7 +101,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>run-ant</id>
