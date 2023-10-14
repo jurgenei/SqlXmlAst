@@ -1782,7 +1782,7 @@ relational_table
       (CACHE | NOCACHE)? (RESULT_CACHE LEFT_PAREN MODE (DEFAULT | FORCE) RIGHT_PAREN)?
       parallel_clause?
       (ROWDEPENDENCIES | NOROWDEPENDENCIES)?
-      (enable_disable_clause+)? row_movement_clause? flashback_archive_clause? table_compression?
+      (enable_disable_clause+)? row_movement_clause? flashback_archive_clause? physical_attributes_clause? table_compression?
     ;
 
 relational_properties
