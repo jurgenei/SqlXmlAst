@@ -3924,7 +3924,7 @@ atom
     ;
 
 quantified_expression
-    : quantiefier=(SOME | EXISTS | ALL | ANY) (LEFT_PAREN subquery RIGHT_PAREN | LEFT_PAREN expression RIGHT_PAREN)
+    : quantiefier=(SOME | EXISTS | ALL | ANY) (LEFT_PAREN subquery_factoring_clause? subquery RIGHT_PAREN | LEFT_PAREN expression RIGHT_PAREN)
     ;
 
 string_function
