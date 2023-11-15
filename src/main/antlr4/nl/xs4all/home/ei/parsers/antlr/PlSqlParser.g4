@@ -168,7 +168,7 @@ procedure_spec
 
 function_spec
     : FUNCTION identifier (LEFT_PAREN parameter ( COMMA parameter)* RIGHT_PAREN)?
-      RETURN type_spec (DETERMINISTIC)? (RESULT_CACHE)? SEMICOLON
+      RETURN type_spec (DETERMINISTIC)? (RESULT_CACHE)? (PARALLEL_ENABLE)? SEMICOLON
     ;
 
 package_obj_body
