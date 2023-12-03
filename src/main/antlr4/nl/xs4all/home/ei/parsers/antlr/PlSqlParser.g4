@@ -1812,8 +1812,9 @@ range_partitions
           LEFT_PAREN (COMMA? PARTITION partition_name? range_values_clause table_partition_description)+ RIGHT_PAREN
     ;
 
+// Jurgen
 list_partitions
-    : PARTITION BY LIST LEFT_PAREN column_name RIGHT_PAREN
+    : PARTITION BY LIST LEFT_PAREN column_name RIGHT_PAREN AUTOMATIC?
         LEFT_PAREN (COMMA? PARTITION partition_name? list_values_clause table_partition_description )+ RIGHT_PAREN
     ;
 
@@ -2450,17 +2451,18 @@ alter_table
       SEMICOLON
     ;
 
+// Jurgen
 alter_table_modify
     : MODIFY alter_table_modify_clause
     ;
 
 alter_table_modify_clause
-    : table_partitioning_clauses index_updates?
+    : table_partitioning_clauses index_updates
     | (COMMA? modify_col_properties)+
     ;
 
 index_updates
-    : UPDATE INDEXES LEFT_PAREN index_name_scope (COMMA index_name_scope)* RIGHT_PAREN
+    : UPDATE INDEXES (LEFT_PAREN index_name_scope (COMMA index_name_scope)* RIGHT_PAREN | ONLINE)
     ;
 
 index_name_scope
