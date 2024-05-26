@@ -1954,11 +1954,16 @@ list_values_clause
     : VALUES LEFT_PAREN ((COMMA? literal)+ | DEFAULT) RIGHT_PAREN
     ;
 
+
 table_partition_description
     : deferred_segment_creation? segment_attributes_clause?
         (table_compression | key_compression)?
         (OVERFLOW segment_attributes_clause? )?
         (lob_storage_clause | varray_col_properties | nested_table_col_properties)?
+        // Jurgen 26 May added below
+        logging_clause?
+        storage_clause?
+        partitioning_storage_clause?
     ;
 
 partitioning_storage_clause

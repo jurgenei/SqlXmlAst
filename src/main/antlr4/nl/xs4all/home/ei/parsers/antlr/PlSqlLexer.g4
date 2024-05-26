@@ -2266,11 +2266,6 @@ LEAST:                        L E A S T ;
 GREATEST:                     G R E A T E S T ;
 TO_DATE:                      T O '_' D A T E ;
 
-// jurgen added conditional compile
-DLR_IF:                       '$' I F ;
-DLR_THEN:                     '$' T H E N ;
-DLR_ELSE:                     '$' E L S E;
-DLR_END:                      '$' E N D;
 
 // Rule #358 <NATIONAL_CHAR_STRING_LIT> - subtoken typecast in <REGULAR_ID>, it also incorporates <character_representation>
 //  Lowercase 'n' is a usual addition to the standard
@@ -2390,7 +2385,6 @@ INTRODUCER
 
 SPACES: [ \t\r\n]+ -> channel(HIDDEN);
 
-
 // Rule #504 <SIMPLE_LETTER> - simple_latin _letter was generalised into SIMPLE_LETTER
 //  Unicode is yet to be implemented - see NSF0
 // JH extended with lowe case
@@ -2411,6 +2405,18 @@ MULTI_LINE_COMMENT:  '/*' .*? '*/' -> channel(HIDDEN);
 
 REM_COMMENT:          REM SPACE ~('\r' | '\n')*  -> channel(HIDDEN);
 PROMPT_COMMENT:       PROMPT SPACE ~('\r' | '\n')*  -> channel(HIDDEN);
+
+// 25 may 2024 jurgen, vde macros
+// hide whole conditional block from being parsed
+// jurgen added conditional compile
+
+fragment DLR_IF:                       '$' I F ;
+fragment DLR_THEN:                     '$' T H E N ;
+fragment DLR_ELSE:                     '$' E L S E ;
+fragment DLR_END:                      '$' E N D ;
+
+MACRO_START: DLR_IF .*? (DLR_ELSE|DLR_END) -> channel(HIDDEN);
+MACRO_END:   DLR_END -> channel(HIDDEN);
 
 START_CMD
     // TODO When using full word START there is a conflict with START WITH in sequences and CONNECT BY queries
