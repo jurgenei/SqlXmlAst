@@ -142,11 +142,11 @@ alter_package
     ;
 
 create_package
-    : CREATE (OR REPLACE)? PACKAGE (schema_object_name PERIOD)? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name? SEMICOLON
+    : CREATE (OR REPLACE)? editionable? PACKAGE (schema_object_name PERIOD)? package_name invoker_rights_clause? (IS | AS) package_obj_spec* END package_name? SEMICOLON
     ;
 
 create_package_body
-    : CREATE (OR REPLACE)? PACKAGE BODY (schema_object_name PERIOD)? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name? SEMICOLON
+    : CREATE (OR REPLACE)? editionable? PACKAGE BODY (schema_object_name PERIOD)? package_name (IS | AS) package_obj_body* (BEGIN seq_of_statements)? END package_name? SEMICOLON
     ;
 
 // Create Package Specific Clauses
@@ -205,7 +205,7 @@ procedure_body
     ;
 
 create_procedure_body
-    : CREATE (OR REPLACE)? (EDITIONABLE)? PROCEDURE procedure_name (LEFT_PAREN parameter (COMMA parameter)* RIGHT_PAREN)?
+    : CREATE (OR REPLACE)? editionable? PROCEDURE procedure_name (LEFT_PAREN parameter (COMMA parameter)* RIGHT_PAREN)?
       invoker_rights_clause? (IS | AS)
       (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL) SEMICOLON
     ;
@@ -222,7 +222,7 @@ alter_trigger
     ;
 
 create_trigger
-    : CREATE ( OR REPLACE )? EDITIONABLE? TRIGGER trigger_name
+    : CREATE ( OR REPLACE )? editionable? TRIGGER trigger_name
       (simple_dml_trigger | compound_dml_trigger | non_dml_trigger)
       trigger_follows_clause? (ENABLE | DISABLE)? trigger_when_clause? trigger_body SEMICOLON
     ;
@@ -1217,15 +1217,11 @@ directory_path
 alter_library
     : ALTER LIBRARY library_name
        ( COMPILE library_debug? compiler_parameters_clause* (REUSE SETTINGS)?
-       | library_editionable
+       | editionable
        )
      SEMICOLON
     ;
 
-library_editionable
-    : // {version12}?
-      (EDITIONABLE | NONEDITIONABLE)
-    ;
 
 library_debug
     : // {version12}?
@@ -1267,11 +1263,15 @@ alter_view_editionable
       (EDITIONABLE | NONEDITIONABLE)
     ;
 
- // jurgen added EDITIONABLE 20190401
+ // jurgen added EDITIONABLE 20190401 EDITIONING
 create_view
-    : CREATE (OR REPLACE)? (OR? FORCE)? (EDITIONING|EDITIONABLE)? VIEW
+    : CREATE (OR REPLACE)? (OR? FORCE)? editionable? VIEW
       tableview_name view_options? collation?
-      AS withtimeas? subquery subquery_restriction_clause?
+      AS (
+        withtimeas? subquery subquery_restriction_clause?
+        | subquery_factoring_clause
+      )
+
     ;
 
 withtimeas
@@ -1612,6 +1612,10 @@ including_or_excluding
     | EXCLUDING
     ;
 
+editionable
+    : // {version12}?
+      (EDITIONABLE | NONEDITIONABLE)
+    ;
 
 create_materialized_view_log
     : CREATE MATERIALIZED VIEW LOG ON tableview_name
@@ -1814,7 +1818,7 @@ range_partitions
 
 // Jurgen
 list_partitions
-    : PARTITION BY LIST LEFT_PAREN column_name RIGHT_PAREN AUTOMATIC?
+    : PARTITION BY LIST LEFT_PAREN (COMMA? column_name)+ RIGHT_PAREN AUTOMATIC?
         LEFT_PAREN (COMMA? PARTITION partition_name? list_values_clause table_partition_description )+ RIGHT_PAREN
     ;
 
@@ -1846,7 +1850,7 @@ composite_range_partitions
     ;
 
 composite_list_partitions
-    : PARTITION BY LIST LEFT_PAREN column_name RIGHT_PAREN
+    : PARTITION BY LIST LEFT_PAREN (COMMA? column_name)+ RIGHT_PAREN
        (subpartition_by_range | subpartition_by_list | subpartition_by_hash)
         LEFT_PAREN (COMMA? list_partition_desc)+ RIGHT_PAREN
     ;
@@ -2136,7 +2140,7 @@ allow_or_disallow
 
 create_synonym
     : CREATE (OR REPLACE)? PUBLIC SYNONYM synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
-    | CREATE (OR REPLACE)? EDITIONABLE? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
+    | CREATE (OR REPLACE)? editionable? SYNONYM (schema_name PERIOD)? synonym_name FOR (schema_name PERIOD)? schema_object_name (AT_SIGN link_name)?
     ;
 
 comment_on_table
@@ -3026,7 +3030,7 @@ varray_type_def
 // Statements
 
 seq_of_statements
-    : (statement (SEMICOLON | EOF) | label_declaration | dlr_if_statement)+
+    : (statement (SEMICOLON | EOF) | label_declaration)+
     ;
 
 label_declaration
@@ -3086,19 +3090,6 @@ elsif_part
 else_part
     : ELSE seq_of_statements
     ;
-
-//$IF $$debug_on = 1PERCENT_ROWCOUNT $THEN
-//
-//    dbms_output.put_line(' Call vic_01_retrieve_check : ' || SQL%rowcount);
-// $END
-
-dlr_if_statement
-    : DLR_IF condition DLR_THEN seq_of_statements dlr_else_part? DLR_END
-    ;
-
-dlr_else_part
-   : DLR_ELSE seq_of_statements
-   ;
 
 loop_statement
     : label_declaration? (WHILE condition | FOR cursor_loop_param)? LOOP seq_of_statements END LOOP label_name?
@@ -3270,26 +3261,6 @@ savepoint_statement
     ;
 
 // Dml
-
-/* TODO
-//SHOULD BE OVERRIDEN!
-compilation_unit
-    : seq_of_statements* EOF
-    ;
-
-//SHOULD BE OVERRIDEN!
-seq_of_statements
-    : select_statement
-    | update_statement
-    | delete_statement
-    | insert_statement
-    | lock_table_statement
-    | lock_table_statement
-    | merge_statement
-    | explain_statement
-//    | case_statement[true]
-    ;
-*/
 
 explain_statement
     : EXPLAIN PLAN (SET STATEMENT_ID EQUALS_OP quoted_string)? (INTO tableview_name)?
@@ -3647,8 +3618,9 @@ insert_into_clause
     : INTO general_table_ref paren_column_list?
     ;
 
+// Jurgen 24Jun2024, allow single expr without paren
 values_clause
-    : VALUES LEFT_PAREN expressions? RIGHT_PAREN
+    : VALUES ( LEFT_PAREN expressions? RIGHT_PAREN | expression )
     ;
 
 merge_statement

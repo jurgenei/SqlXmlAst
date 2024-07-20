@@ -14,8 +14,8 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         this.xmlAstWriter = xmlAstWriter;
     }
 
-     
-     /** 
+
+     /**
       * @param ctx
       */
      public void enterEveryRule(ParserRuleContext ctx) {
@@ -26,8 +26,8 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         }
     }
 
-     
-     /** 
+
+     /**
       * @param ctx
       */
      public void exitEveryRule(ParserRuleContext ctx) {
@@ -38,8 +38,8 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         }
     }
 
-     
-     /** 
+
+     /**
       * @param node
       */
      public void visitTerminal(TerminalNode node) {
@@ -50,8 +50,8 @@ public class PlSqlWriter extends PlSqlParserBaseListener  {
         }
     }
 
-     
-     /** 
+
+     /**
       * @param node
       */
      public void visitErrorNode(ErrorNode node) {
