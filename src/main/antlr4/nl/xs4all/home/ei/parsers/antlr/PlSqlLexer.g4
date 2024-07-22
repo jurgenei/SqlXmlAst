@@ -2449,6 +2449,7 @@ CHAR_STRING_PERL:
         | QS_TILDA
         | QS_SOLIDUS
         | QS_RSOLIDUS
+        | QS_CARET
     ) '\'' -> type(CHAR_STRING)
 ;
 fragment QS_ANGLE    : '<' .*? '>';
@@ -2462,6 +2463,7 @@ fragment QS_DQUOTE   : '"' .*? '"';
 fragment QS_TILDA    : '~' .*? '~';
 fragment QS_SOLIDUS  : '/' .*? '/';
 fragment QS_RSOLIDUS : '\\' .*? '\\';
+fragment QS_CARET    : '^' .*? '^';
 
 DELIMITED_ID: '"' (~ [\u0000"] | '"' '"')+ '"';
 
@@ -2527,6 +2529,18 @@ REGULAR_ID: SIMPLE_LETTER (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*;
 INQUIRY_DIRECTIVE: '$$' (SIMPLE_LETTER | '_')+;
 
 SPACES: [ \t\r\n]+ -> channel(HIDDEN);
+
+// Jurgen
+// hide whole conditional block from being parsed
+// jurgen added conditional compile
+
+fragment DLR_IF:                       '$' I F ;
+fragment DLR_THEN:                     '$' T H E N ;
+fragment DLR_ELSE:                     '$' E L S E ;
+fragment DLR_END:                      '$' E N D ;
+
+MACRO_START: DLR_IF .*? (DLR_ELSE|DLR_END) -> channel(HIDDEN);
+MACRO_END:   DLR_END -> channel(HIDDEN);
 
 // Fragment rules
 

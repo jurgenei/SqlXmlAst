@@ -767,9 +767,8 @@ procedure_body
     ;
 
 create_procedure_body
-    : CREATE (OR REPLACE)? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')? invoker_rights_clause? PARALLEL_ENABLE? (
-        IS
-        | AS
+    : CREATE (OR REPLACE)? editioning_clause? PROCEDURE procedure_name ('(' parameter (',' parameter)* ')')? invoker_rights_clause? PARALLEL_ENABLE? (
+        IS | AS
     ) (DECLARE? seq_of_declare_specs? body | call_spec | EXTERNAL)
     ;
 
@@ -6230,11 +6229,17 @@ values_clause
     ;
 
 merge_statement
-    : MERGE INTO tableview_name table_alias? USING selected_tableview ON '(' condition ')' (
+    : MERGE INTO merge_target table_alias? USING selected_tableview ON '(' condition ')' (
         merge_update_clause merge_insert_clause?
         | merge_insert_clause merge_update_clause?
     )? error_logging_clause?
     ;
+
+// Jurgen
+merge_target
+   : tableview_name
+   | LEFT_PAREN select_statement RIGHT_PAREN
+   ;
 
 // Merge Specific Clauses
 
@@ -6919,7 +6924,7 @@ whenever_command
     ;
 
 set_command
-    : SET regular_id (CHAR_STRING | ON | OFF | /*EXACT_NUM_LIT*/ numeric | regular_id)
+    : SET regular_id (CHAR_STRING | ON | OFF | /*EXACT_NUM_LIT*/ numeric | regular_id) ';'?
     ;
 
 timing_command
