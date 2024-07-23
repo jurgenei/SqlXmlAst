@@ -512,7 +512,7 @@ match_string
     ;
 
 create_function_body
-    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? FUNCTION function_name (
+    : CREATE (OR REPLACE)? editioning_clause? FUNCTION function_name (
         '(' parameter (',' parameter)* ')'
     )? RETURN type_spec (SHARING '=' (METADATA | NONE))? (
         invoker_rights_clause
@@ -662,14 +662,14 @@ alter_package
     ;
 
 create_package
-    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? PACKAGE (schema_object_name '.')? package_name invoker_rights_clause? (
+    : CREATE (OR REPLACE)? editioning_clause? PACKAGE (schema_object_name '.')? package_name invoker_rights_clause? (
         IS
         | AS
     ) package_obj_spec* END package_name?
     ;
 
 create_package_body
-    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? PACKAGE BODY (schema_object_name '.')? package_name (
+    : CREATE (OR REPLACE)? editioning_clause? PACKAGE BODY (schema_object_name '.')? package_name (
         IS
         | AS
     ) package_obj_body*? (BEGIN seq_of_statements (EXCEPTION exception_handler+)?)? END package_name?
@@ -2623,7 +2623,7 @@ create_java
     ;
 
 create_library
-    : CREATE (OR REPLACE)? (EDITIONABLE | NONEDITIONABLE)? LIBRARY plsql_library_source
+    : CREATE (OR REPLACE)? editioning_clause? LIBRARY plsql_library_source
     ;
 
 plsql_library_source
@@ -2714,13 +2714,10 @@ alter_view
         )
         | COMPILE
         | READ (ONLY | WRITE)
-        | alter_view_editionable?
+        | editioning_clause?
     )
     ;
 
-alter_view_editionable
-    : /* {this.isVersion12()}? */ (EDITIONABLE | NONEDITIONABLE)
-    ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-VIEW.html
 create_view
@@ -2735,8 +2732,7 @@ create_view
     ;
 
 editioning_clause
-    : EDITIONING
-    | EDITIONABLE EDITIONING?
+    : EDITIONABLE
     | NONEDITIONABLE
     ;
 
@@ -5920,6 +5916,11 @@ subquery
     : subquery_basic_elements subquery_operation_part*
     ;
 
+//subquery_basic_elements
+//    : query_block
+//    | '(' subquery ')'
+//    ;
+
 subquery_basic_elements
     : query_block
     | '(' subquery ')'
@@ -6544,7 +6545,7 @@ string_function
         ',' quoted_string
     )? ')'
     | DECODE '(' expressions ')'
-    | CHR '(' concatenation USING NCHAR_CS ')'
+    | CHR '(' concatenation (USING NCHAR_CS)? ')'
     | NVL '(' expression ',' expression ')'
     | TRIM '(' ((LEADING | TRAILING | BOTH)? expression? FROM)? concatenation ')'
     | TO_DATE '(' (table_element | standard_function | expression) (
@@ -6840,7 +6841,8 @@ string_delimiter
     | string_function
     | string_delimiter BAR BAR string_delimiter
     | '(' string_delimiter ')'
-    | id_expression
+    //| id_expression
+    || column_name
     ;
 
 cost_matrix_clause
