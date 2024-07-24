@@ -483,12 +483,6 @@ DML                            : D M L;
 DML_UPDATE                     : D M L '_' U P D A T E;
 DOCFIDELITY                    : D O C F I D E L I T Y;
 DOCUMENT                       : D O C U M E N T;
-DOLLAR_ELSE                    : '$ELSE';
-DOLLAR_ELSIF                   : '$ELSIF';
-DOLLAR_END                     : '$END';
-DOLLAR_ERROR                   : '$ERROR';
-DOLLAR_IF                      : '$IF';
-DOLLAR_THEN                    : '$THEN';
 DOMAIN_INDEX_FILTER            : D O M A I N '_' I N D E X '_' F I L T E R;
 DOMAIN_INDEX_NO_SORT           : D O M A I N '_' I N D E X '_' N O '_' S O R T;
 DOMAIN_INDEX_SORT              : D O M A I N '_' I N D E X '_' S O R T;
@@ -2534,13 +2528,15 @@ SPACES: [ \t\r\n]+ -> channel(HIDDEN);
 // hide whole conditional block from being parsed
 // jurgen added conditional compile
 
-fragment DLR_IF:                       '$' I F ;
-fragment DLR_THEN:                     '$' T H E N ;
-fragment DLR_ELSE:                     '$' E L S E ;
-fragment DLR_END:                      '$' E N D ;
+fragment DOLLAR_ELSE                    : '$' E L S E;
+fragment DOLLAR_ELSIF                   : '$' E L S I F;
+fragment DOLLAR_END                     : '$' E N D;
+fragment DOLLAR_ERROR                   : '$' E R R O R;
+fragment DOLLAR_IF                      : '$' I F;
+fragment DOLLAR_THEN                    : '$' T H E N;
 
-MACRO_START: DLR_IF .*? (DLR_ELSE|DLR_END) -> channel(HIDDEN);
-MACRO_END:   DLR_END -> channel(HIDDEN);
+MACRO_START: DOLLAR_IF .*? (DOLLAR_ELSE|DOLLAR_END) -> channel(HIDDEN);
+MACRO_END:   DOLLAR_END -> channel(HIDDEN);
 
 // Fragment rules
 

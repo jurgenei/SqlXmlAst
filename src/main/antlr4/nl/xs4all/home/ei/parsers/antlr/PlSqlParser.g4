@@ -6409,8 +6409,10 @@ relational_operator
     | ('<' | '>') '='?
     ;
 
+// Jurgen
 in_elements
-    : '(' subquery ')'
+    // : '(' subquery ')'
+    : '(' select_only_statement ')'
     | '(' concatenation (',' concatenation)* ')'
     | constant
     | bind_variable
