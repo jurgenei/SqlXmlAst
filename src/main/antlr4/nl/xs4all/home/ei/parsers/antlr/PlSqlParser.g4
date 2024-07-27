@@ -4,6 +4,7 @@
  * Copyright (c) 2009-2011 Alexandre Porcelli <alexandre.porcelli@gmail.com>
  * Copyright (c) 2015-2019 Ivan Kochurkin (KvanTTT, kvanttt@gmail.com, Positive Technologies).
  * Copyright (c) 2017-2018 Mark Adams <madams51703@gmail.com>
+ * Copyright (c) 2018-2024 Jurgen Hildebrand <ei@xs4all.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -5410,7 +5411,7 @@ java_spec
     ;
 
 c_spec
-    : (LANGUAGE C | EXTERNAL) (
+    : (LANGUAGE C_ | EXTERNAL) (
         NAME id_expression LIBRARY identifier
         | LIBRARY identifier (NAME id_expression)?
     ) c_agent_in_clause? (WITH CONTEXT)? c_parameters_clause?
@@ -5427,7 +5428,11 @@ c_parameters_clause
 c_external_parameter
     : CONTEXT
     | SELF (TDO | c_property)?
-    | (parameter_name | RETURN) c_property? (BY REFERENCE)? external_datatype = regular_id?
+    | (parameter_name | RETURN) c_property? (BY REFERENCE)? external_datatype regular_id?
+    ;
+
+external_datatype
+    : INT | BYTE | CHAR
     ;
 
 c_property

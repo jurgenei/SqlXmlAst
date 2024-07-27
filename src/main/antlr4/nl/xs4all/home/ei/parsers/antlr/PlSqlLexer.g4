@@ -4,6 +4,7 @@
  * Copyright (c) 2009-2011 Alexandre Porcelli <alexandre.porcelli@gmail.com>
  * Copyright (c) 2015-2019 Ivan Kochurkin (KvanTTT, kvanttt@gmail.com, Positive Technologies).
  * Copyright (c) 2017 Mark Adams <madams51703@gmail.com>
+ * Copyright (c) 2018-2024 Jurgen Hildebrand <ei@xs4all.nl>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +61,8 @@ fragment W: [wW];
 fragment X: [xX];
 fragment Y: [yY];
 fragment Z: [zZ];
+
+
 
 ABORT                          : A B O R T;
 ABS                            : A B S;
@@ -217,6 +220,7 @@ BY                             : B Y;
 BYPASS_RECURSIVE_CHECK         : B Y P A S S '_' R E C U R S I V E '_' C H E C K;
 BYPASS_UJVC                    : B Y P A S S '_' U J V C;
 BYTE                           : B Y T E;
+C_                             : C;
 CACHE                          : C A C H E;
 CACHE_CB                       : C A C H E '_' C B;
 CACHE_INSTANCES                : C A C H E '_' I N S T A N C E S;
