@@ -208,7 +208,7 @@ alter_diskgroup
                 | filegroup_clauses
             )
         )
-        | (id_expression (',' id_expression)* | ALL) (
+        | (comma_id_expression | ALL) (
             undrop_disk_clause
             | diskgroup_availability
             | enable_disable_volume
@@ -258,8 +258,8 @@ rename_disk_clause
 disk_online_clause
     : ONLINE (
         (
-            quorum_regular? DISK id_expression (',' id_expression)*
-            | DISKS IN quorum_regular? FAILGROUP id_expression (',' id_expression)*
+            quorum_regular? DISK comma_id_expression
+            | DISKS IN quorum_regular? FAILGROUP comma_id_expression
         )+
         | ALL
     ) (POWER numeric)? wait_nowait?
@@ -267,8 +267,8 @@ disk_online_clause
 
 disk_offline_clause
     : OFFLINE (
-        quorum_regular? DISK id_expression (',' id_expression)*
-        | DISKS IN quorum_regular? FAILGROUP id_expression (',' id_expression)*
+        quorum_regular? DISK comma_id_expression
+        | DISKS IN quorum_regular? FAILGROUP comma_id_expression
     ) timeout_clause?
     ;
 
@@ -295,7 +295,7 @@ diskgroup_template_clauses
     : (ADD | MODIFY) TEMPLATE id_expression qualified_template_clause (
         ',' id_expression qualified_template_clause
     )*
-    | DROP TEMPLATE id_expression (',' id_expression)*
+    | DROP TEMPLATE comma_id_expression
     ;
 
 qualified_template_clause
@@ -460,7 +460,7 @@ diskgroup_availability
     ;
 
 enable_disable_volume
-    : (ENABLE | DISABLE) VOLUME (id_expression (',' id_expression)* | ALL)
+    : (ENABLE | DISABLE) VOLUME (comma_id_expression | ALL)
     ;
 
 // DDL -> SQL Statements for Stored PL/SQL Units
@@ -1303,7 +1303,7 @@ cache_clause
 cache_specification
     : MEASURE GROUP (
         ALL
-        | '(' id_expression (',' id_expression)* ')' levels_clause (',' levels_clause)*
+        | '(' comma_id_expression ')' levels_clause (',' levels_clause)*
     )
     ;
 
@@ -1381,12 +1381,12 @@ ad_level_clause
     key_clause alternate_key_clause? (MEMBER NAME expression)? (MEMBER CAPTION expression)? (
         MEMBER DESCRIPTION expression
     )? (ORDER BY (MIN | MAX)? dim_order_clause (',' (MIN | MAX)? dim_order_clause)*)? (
-        DETERMINES '(' id_expression (',' id_expression)* ')'
+        DETERMINES '(' comma_id_expression ')'
     )?
     ;
 
 key_clause
-    : KEY (a = id_expression | '(' id_expression (',' id_expression)* ')')
+    : KEY (a = id_expression | '(' comma_id_expression ')')
     ;
 
 alternate_key_clause
@@ -1968,7 +1968,7 @@ proxy_clause
     ;
 
 container_names
-    : LEFT_PAREN id_expression (',' id_expression)* RIGHT_PAREN
+    : LEFT_PAREN comma_id_expression RIGHT_PAREN
     ;
 
 set_container_data
@@ -2472,7 +2472,7 @@ flashback_table
     ;
 
 restore_point
-    : identifier ('.' id_expression)*
+    : multidot_expression
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/PURGE.html
@@ -2537,7 +2537,7 @@ revoke_object_privileges
 on_object_clause
     : ON (
         (schema_name '.')? o = id_expression
-        | USER id_expression (',' id_expression)*
+        | USER comma_id_expression
         | DIRECTORY directory_name
         | EDITION edition_name
         | MINING MODEL (schema_name '.')? mmn = id_expression
@@ -3178,15 +3178,15 @@ zonemap_attributes
     ;
 
 zonemap_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 operator_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 operator_function_name
-    : identifier ('.' id_expression)*
+    : multidot_expression
     ;
 
 create_zonemap_on_table
@@ -4132,7 +4132,7 @@ levels_item
     ;
 
 measure_list
-    : id_expression (',' id_expression)*
+    : comma_id_expression
     ;
 
 alter_drop_cache_clause
@@ -4740,7 +4740,7 @@ role_identified_clause
     : NOT IDENTIFIED
     | IDENTIFIED (
         BY identifier
-        | USING identifier ('.' id_expression)?
+        | USING dot_expression
         | EXTERNALLY
         | GLOBALLY (AS CHAR_STRING)?
     )
@@ -6843,7 +6843,7 @@ string_delimiter
     | string_function
     | string_delimiter BAR BAR string_delimiter
     | '(' string_delimiter ')'
-    //| id_expression
+    //| id_expression // Jurgen
     || column_name
     ;
 
@@ -6997,7 +6997,7 @@ schema_name
     ;
 
 routine_name
-    : identifier ('.' id_expression)* ('@' link_name)?
+    : multidot_expression ('@' link_name)?
     ;
 
 package_name
@@ -7005,7 +7005,7 @@ package_name
     ;
 
 implementation_type_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 parameter_name
@@ -7021,11 +7021,11 @@ main_model_name
     ;
 
 container_tableview_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 aggregate_function_name
-    : identifier ('.' id_expression)*
+    : multidot_expression
     ;
 
 query_name
@@ -7042,7 +7042,7 @@ role_name
     ;
 
 constraint_name
-    : identifier ('.' id_expression)* ('@' link_name)?
+    : multidot_expression ('@' link_name)?
     ;
 
 label_name
@@ -7058,19 +7058,19 @@ sequence_name
     ;
 
 exception_name
-    : identifier ('.' id_expression)*
+    : multidot_expression
     ;
 
 function_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 procedure_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 trigger_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 variable_name
@@ -7079,7 +7079,7 @@ variable_name
     ;
 
 index_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 cursor_name
@@ -7093,7 +7093,7 @@ record_name
     ;
 
 collection_name
-    : identifier ('.' id_expression)?
+    : dot_expression
     ;
 
 link_name
@@ -7109,11 +7109,11 @@ connection_qualifier
     ;
 
 column_name
-    : identifier ('.' id_expression)*
+    : multidot_expression
     ;
 
 tableview_name
-    : identifier ('.' id_expression)? (
+    : dot_expression (
         AT_SIGN link_name
         | /*TODO{!(input.LA(2) == BY)}?*/ partition_extension_clause
     )?
@@ -7463,6 +7463,18 @@ identifier
 id_expression
     : regular_id
     | DELIMITED_ID
+    ;
+
+dot_expression
+    : identifier ('.' id_expression)?
+    ;
+
+comma_id_expression
+    : id_expression (',' id_expression)*
+    ;
+
+multidot_expression
+    : identifier ('.' id_expression)*
     ;
 
 inquiry_directive
