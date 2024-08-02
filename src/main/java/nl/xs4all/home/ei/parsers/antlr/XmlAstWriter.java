@@ -11,6 +11,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.*;
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class XmlAstWriter {
@@ -58,6 +59,11 @@ public class XmlAstWriter {
 
     }
 
+    public void clearDFA() {
+        lexer.getInterpreter().clearDFA();
+        parser.getInterpreter().clearDFA();
+    }
+
     public String getgrammarNS() {
         return grammarNS;
     }
@@ -101,27 +107,25 @@ public class XmlAstWriter {
         final InputStream inputStream = new FileInputStream(inFile);
         final CharStream s = CharStreams.fromStream(inputStream);
 
+
+
         // try garbage collect to prevent clogging the heap
         // when converting many files we are running
         // out of memory, gc/sleep is a try to prevent this
+        /*
         System.gc();
         Thread.sleep(100);
+        */
 
         lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(s);
+
         tokenStream = new CommonTokenStream(lexer);
+
         parser = parserClass.getDeclaredConstructor(TokenStream.class).newInstance(tokenStream);
 
-        // renewing this does not seem to matter
-        // When parsing a huge number of files heap chokes
-        // https://stackoverflow.com/questions/28724334/antlr4-memory-cleanup
-        // ... If I replace the cache of the parser and lexer, there is no more path between these
-        // data structures and some static fields. Therefore the garbage collector can collect them.
-        // lexer.setInterpreter(
-        //        new LexerATNSimulator(lexer, lexer.getATN(), lexer.getInterpreter().decisionToDFA,
-        //               new PredictionContextCache()));
-        // parser.setInterpreter(
-        //        new ParserATNSimulator(parser, parser.getATN(), parser.getInterpreter().decisionToDFA,
-        //                new PredictionContextCache()));
+        parser.setBuildParseTree(false);
+
+
 
         parser.setErrorHandler(new BailErrorStrategy());
         ruleNames = Arrays.asList(parser.getRuleNames());
@@ -150,10 +154,12 @@ public class XmlAstWriter {
         xmlStreamWriter.flush();
         xmlStreamWriter.close();
 
-        BufferedWriter bwr = new BufferedWriter(new FileWriter(outFile));
+        final BufferedWriter bwr = new BufferedWriter(new FileWriter(outFile));
         bwr.write(os.toString());
         bwr.flush();
         bwr.close();
+
+        inputStream.close();
 
     }
 

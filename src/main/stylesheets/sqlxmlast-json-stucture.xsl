@@ -67,7 +67,7 @@ Jurgen Hildebrand (ei@xs4all.nl)
                 </string>
             </xsl:if>
             <xsl:if test="@object-type">
-                <string key="object-type">
+                l<string key="object-type">
                     <xsl:value-of select="@object-type"/>
                 </string>
             </xsl:if>

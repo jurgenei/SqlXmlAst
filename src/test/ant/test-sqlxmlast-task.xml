@@ -75,7 +75,7 @@
     </target>
     <target name="testAntlrG">
         <property name="s2" value="src/main/antlr4/nl/xs4all/home/ei/parsers/antlr"/>
-        <property name="d2" value="target/G"/>
+        <property name="d2" value="target"/>
         <au:assertFileDoesntExist file="${d1}"/>
         <sqlxmlast grammar="antlr4"
                    basedir="${s2}"

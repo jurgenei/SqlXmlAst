@@ -33,11 +33,51 @@ options {
 //#include <PlSqlParserBase.h>
 //}
 
+/*
 script
     : sql_plus_command_no_semicolon? (
         (sql_plus_command | unit_statement) (SEMICOLON '/'? (sql_plus_command | unit_statement))* SEMICOLON? '/'?
     ) EOF? // Jurgen
     ;
+
+script
+    : sql_plus_command? (
+        (sql_plus_command | unit_statement) (SEMICOLON '/'? (sql_plus_command | unit_statement))* SEMICOLON? '/'?
+    ) EOF
+    ;
+*/
+
+/*
+script
+    : script_bits* EOF
+    ;
+
+script_bits
+    : unit_statement
+    | sql_plus_command
+    | '/'
+    | SEMICOLON
+    ;
+*/
+
+
+script
+    : (
+        (sql_plus_command | unit_statement)
+        (SEMICOLON? '/'* (sql_plus_command | unit_statement))* SEMICOLON? '/'*
+    ) EOF // Jurgen
+    ;
+/*
+script
+    : commands* EOF
+    ;
+
+commands
+    : sql_plus_command
+    | unit_statement
+    | '/'
+    ;
+*/
 
 unit_statement
     : alter_analytic_view
@@ -274,7 +314,7 @@ disk_offline_clause
     ;
 
 timeout_clause
-    : DROP AFTER numeric (M | H)
+    : DROP AFTER numeric (M_ | H_)
     ;
 
 rebalance_diskgroup_clause
@@ -346,7 +386,7 @@ diskgroup_volume_clauses
 
 add_volume_clause
     : ADD VOLUME id_expression SIZE size_clause redundancy_clause? (
-        STRIPE_WIDTH numeric (K | M)
+        STRIPE_WIDTH numeric (K_ | M_)
     )? (STRIPE_COLUMNS numeric)?
     ;
 
@@ -717,7 +757,7 @@ package_obj_body
     | type_declaration
     | procedure_body
     | function_body
-    | selection_directive
+    // | selection_directive
     ;
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/alter-pmem-filestore.html
@@ -2806,7 +2846,7 @@ xmltype_view_clause
     ;
 
 xml_schema_spec
-    : (XMLSCHEMA xml_schema_url)? ELEMENT (element | xml_schema_url HASH_SIGN element) (
+    : (XMLSCHEMA xml_schema_url)? ELEMENT (element | xml_schema_url HASH_OP element) (
         STORE ALL VARRAYS AS (LOBS | TABLES)
     )? (allow_or_disallow NONSCHEMA)? (allow_or_disallow ANYSCHEMA)?
     ;
@@ -2937,7 +2977,7 @@ create_tablespace_set
 
 permanent_tablespace_attrs
     : MINIMUM EXTENT size_clause
-    | BLOCKSIZE numeric K?
+    | BLOCKSIZE numeric K_?
     | logging_clause
     | FORCE LOGGING
     | tablespace_encryption_clause
@@ -3013,7 +3053,13 @@ build_clause
 
 parallel_clause
     : NOPARALLEL
-    | PARALLEL parallel_count = UNSIGNED_INTEGER?
+    | PARALLEL parallel_count = degree?
+
+    ;
+
+degree
+    : '(' degree ')'
+    | DEGREE? UNSIGNED_INTEGER
     ;
 
 alter_materialized_view
@@ -3496,6 +3542,7 @@ table_properties
         CACHE
         | NOCACHE
     )? result_cache_clause? parallel_clause? monitoring_nomonitoring? (ROWDEPENDENCIES | NOROWDEPENDENCIES)? enable_disable_clause* row_movement_clause?
+        attribute_clustering_clause? // Jurgen
         logical_replication_clause? flashback_archive_clause? physical_properties? (ROW ARCHIVAL)? (
         AS select_only_statement
         | FOR EXCHANGE WITH TABLE (schema_name '.')? table_name
@@ -3758,6 +3805,7 @@ table_partition_description
     )? (lob_storage_clause | varray_col_properties | nested_table_col_properties)*
     ;
 
+
 partitioning_storage_clause
     : (
         TABLESPACE tablespace
@@ -3766,6 +3814,7 @@ partitioning_storage_clause
         | key_compression
         | lob_partitioning_storage
         | VARRAY varray_item STORE AS (BASICFILE | SECUREFILE)? LOB lob_segname
+        | deferred_segment_creation //Jurgen@@
     )+
     ;
 
@@ -3791,7 +3840,7 @@ size_clause
     ;
 
 multiplier
-    : K | M | G | T | P | E
+    : K_ | M_ | G_ | T_ | P_ | E_
     // Jurgen fix me lexer returns regular id
     | regular_id
     ;
@@ -3876,10 +3925,24 @@ deferred_segment_creation
 segment_attributes_clause
     : (
         physical_attributes_clause
-        | TABLESPACE (tablespace_name = id_expression | SET? identifier)
+        | table_space_expression // Jurgen@@
         | table_compression
         | logging_clause
+        | row_level_locking // Jurgen@@
+        | column_store // Jurgen@@
     )+
+    ;
+
+table_space_expression
+    : TABLESPACE (tablespace_name = id_expression | SET? identifier)
+    ;
+
+row_level_locking
+    : NO? ROW LEVEL LOCKING
+    ;
+
+column_store
+    : COLUMN STORE COMPRESS FOR QUERY LOW
     ;
 
 physical_properties
@@ -4775,7 +4838,7 @@ alter_table_partitioning
     : add_table_partition
     | drop_table_partition
     | merge_table_partition
-    | modify_table_partition
+    | modify_table_partition (UPDATE INDEXES | ONLINE)* // Jurgen
     | split_table_partition
     | truncate_table_partition
     | exchange_table_partition
@@ -5042,8 +5105,9 @@ modify_column_clauses
     )
     ;
 
+//Jurgen added identity_clause
 modify_col_properties
-    : column_name datatype? (DEFAULT expression)? (ENCRYPT encryption_spec | DECRYPT)? inline_constraint* lob_storage_clause?
+    : column_name datatype? (DEFAULT expression|identity_clause)? (ENCRYPT encryption_spec | DECRYPT)? inline_constraint* lob_storage_clause?
     //TODO alter_xmlschema_clause
     ;
 
@@ -5250,6 +5314,8 @@ identity_options
     | NOMINVALUE
     | CYCLE
     | NOCYCLE
+    | NOKEEP
+    | NOSCALE
     | CACHE numeric
     | NOCACHE
     | ORDER
@@ -5469,7 +5535,7 @@ declare_spec
     | type_declaration
     | procedure_body
     | function_body
-    | selection_directive
+    // | selection_directive
     ;
 
 // incorporates constant_declaration
@@ -5544,7 +5610,7 @@ varray_type_def
 // Statements
 
 seq_of_statements
-    : (pragma_declaration* statement (';' | EOF) | label_declaration | selection_directive)+
+    : (pragma_declaration* statement (';' | EOF) | label_declaration /* | selection_directive */)+
     ;
 
 label_declaration
@@ -5657,12 +5723,13 @@ call_statement
 pipe_row_statement
     : PIPE ROW '(' expression ')'
     ;
-
+/*
 selection_directive
     : DOLLAR_IF condition DOLLAR_THEN selection_directive_body (
         DOLLAR_ELSIF selection_directive_body
     )* (DOLLAR_ELSE selection_directive_body)? DOLLAR_END
     ;
+
 
 error_directive
     : DOLLAR_ERROR concatenation DOLLAR_END
@@ -5677,6 +5744,7 @@ selection_directive_body
         | procedure_body
     )+
     ;
+*/
 
 body
     : BEGIN seq_of_statements (EXCEPTION exception_handler+)? END label_name?
@@ -6378,7 +6446,7 @@ logical_operation
         | NAN
         | PRESENT
         | INFINITE
-        | A SET
+        | A_ SET
         | EMPTY_
         | OF TYPE? '(' ONLY? type_spec (',' type_spec)* ')'
         | JSON (FORMAT JSON)? (STRICT | LAX)? ((WITH | WITHOUT) UNIQUE KEYS)?
@@ -6906,19 +6974,15 @@ xmlserialize_param_ident_part
     | INDENT (SIZE '=' concatenation)?
     ;
 
-// SqlPlus
-
-sql_plus_command_no_semicolon
-    : set_command
-    ;
 
 sql_plus_command
     : EXIT
     | PROMPT_MESSAGE
-    | SHOW (ERR | ERRORS)
+    | SHOW (ERR | ERROR | ERRORS) // Jurgen added ERROR
     | whenever_command
     | timing_command
     | start_command
+    | set_command
     ;
 
 start_command
@@ -7467,9 +7531,12 @@ identifier
 
 id_expression
     : regular_id
-    | DELIMITED_ID
+    | delimited_id
     ;
 
+delimited_id
+    : DELIMITED_ID
+    ;
 dot_expression
     : identifier ('.' id_expression)?
     ;
@@ -7496,7 +7563,7 @@ regular_id
     | non_reserved_keywords_in_18c
     | REGULAR_ID
     | ABSENT
-    | A
+    | A_
     | AGENT
     | AGGREGATE
     | ANALYZE
@@ -7505,7 +7572,7 @@ regular_id
     | BATCH
     | BINARY_INTEGER
     | BOOLEAN
-    | C
+    | C_
     | CHAR
     | CHARSETID
     | CHARSETFORM
@@ -7519,7 +7586,7 @@ regular_id
     | DETERMINISTIC
     | DSINTERVAL_UNCONSTRAINED
     | DURATION
-    | E
+    | E_
     | ERROR_INDEX
     | ERROR_CODE
     | ERR
@@ -7532,18 +7599,18 @@ regular_id
     | FILESTORE
     | FLOAT
     | FORALL
-    | G
+    | G_
     | INDICES
     | INOUT
     | INTEGER
     | JSON_TRANSFORM
-    | K
+    | K_
     | LANGUAGE
     | LONG
     | LOOP
     | MAXLEN
     | MOUNTPOINT
-    | M
+    | M_
     | MISSING
     | MISMATCH
     | NUMBER
@@ -7551,7 +7618,7 @@ regular_id
     | OSERROR
     | OUT
     | OVERRIDING
-    | P
+    | P_
     | PARALLEL_ENABLE
     | PIPELINED
     | PLS_INTEGER
@@ -7559,6 +7626,7 @@ regular_id
     | POSITIVE
     | POSITIVEN
     | PRAGMA
+    | PROMPT
     | PUBLIC
     | RAISE
     | RAW
@@ -7580,7 +7648,7 @@ regular_id
     | SQLDATA
     | SQLERROR
     | SUBTYPE
-    | T
+    | T_
     | TDO
     | TIMESTAMP_LTZ_UNCONSTRAINED
     | TIMESTAMP_TZ_UNCONSTRAINED
@@ -7742,7 +7810,7 @@ non_reserved_keywords_in_12c
     | HIERARCHICAL
     | HOURS
     | HTTP
-    | H
+    | H_
     | IDLE
     | ILM
     | IMMUTABLE
@@ -9625,6 +9693,7 @@ non_reserved_keywords_pre12c
     | UNISTR
     | UNLIMITED
     | UNLOAD
+    | UNLOCK
     | UNLOCK
     | UNNEST_INNERJ_DISTINCT_VIEW
     | UNNEST

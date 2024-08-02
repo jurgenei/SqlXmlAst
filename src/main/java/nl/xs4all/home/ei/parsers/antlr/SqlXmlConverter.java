@@ -5,6 +5,8 @@ import java.io.File;
 public class SqlXmlConverter {
 
     private String grammar = "oracle";
+    private XmlAstWriter xmlAstWriter;
+
     String getGrammar() {
         return grammar;
     }
@@ -22,7 +24,6 @@ public class SqlXmlConverter {
     }
 
     public void convert(final File inFile, final File outFile, final String path) throws Exception {
-        XmlAstWriter xmlAstWriter;
         switch(grammar) {
             case "oracle":
                 xmlAstWriter = new XmlAstWriter(PlSqlParser.class, PlSqlLexer.class, PlSqlWriter.class, grammar);
@@ -41,6 +42,10 @@ public class SqlXmlConverter {
         }
         ensureDirectoryFor(outFile);
         xmlAstWriter.convert(inFile,outFile,path);
+    }
+
+    public void clearDFA() {
+        xmlAstWriter.clearDFA();
     }
 
     private void ensureDirectoryFor(final File targetFile) throws Exception {

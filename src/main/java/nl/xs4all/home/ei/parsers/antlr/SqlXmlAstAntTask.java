@@ -1,9 +1,9 @@
 package nl.xs4all.home.ei.parsers.antlr;
 
-
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -74,6 +74,9 @@ public class SqlXmlAstAntTask extends MatchingTask {
 
     private Mapper mapperElement = null;
 
+    private long averageInSecs = 0;
+    private long execSampleSize = 5;
+    private long execAvgBeforeClear = 10;
     /**
      * Defines the mapper to map source to destination files.
      *
@@ -99,6 +102,14 @@ public class SqlXmlAstAntTask extends MatchingTask {
      **/
     public void setDestdir(final File dir) {
         destDir = dir;
+    }
+
+    public void setExecSampleSize(long e) {
+         execSampleSize = e;
+    }
+
+    public void setExecAvgBeforeClear(long e) {
+        execAvgBeforeClear = e;
     }
 
     public void setScanIncludedDirectories(final boolean b) {
@@ -174,7 +185,6 @@ public class SqlXmlAstAntTask extends MatchingTask {
         log(msg, Project.MSG_WARN);
     }
 
-
     protected void handleError(final Throwable ex) {
         if (failOnError) {
             throw new BuildException(ex);
@@ -183,15 +193,11 @@ public class SqlXmlAstAntTask extends MatchingTask {
         }
     }
 
-
-
-
     protected void handleTransformationError(final Exception ex) {
         if (failOnError && failOnTransformationError) {
             throw new BuildException(ex);
         } else {
-            log("Caught an error during transformation: " + ex,
-                    Project.MSG_WARN);
+            log("Caught an error during transformation: " + ex, Project.MSG_WARN);
         }
     }
 
@@ -290,10 +296,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
     }
 
     private void processFile(final File inFile, final File outFile, final String path) throws BuildException {
-        final StopWatch stopwatch = new StopWatch();
+        StopWatch stopwatch = new StopWatch();
         stopwatch.start();
         try {
-            log("BEGIN      " + inFile.getName(), Project.MSG_INFO);
+            log("BEGIN      " + inFile.getAbsolutePath(), Project.MSG_INFO);
             converter.convert(inFile,outFile,path);
             log("END        " + stopwatch, Project.MSG_INFO);
         } catch (final Exception ex) {
@@ -302,6 +308,18 @@ public class SqlXmlAstAntTask extends MatchingTask {
                 outFile.delete();
             }
             handleTransformationError(ex);
+        } finally {
+            long time = stopwatch.getTime(TimeUnit.SECONDS);
+
+            // calculate sliding average
+            averageInSecs -= averageInSecs / execSampleSize;
+            averageInSecs += time / execSampleSize;
+
+            if (averageInSecs > execAvgBeforeClear) {
+                log("CLEAR DFA", Project.MSG_INFO);
+                converter.clearDFA();
+                averageInSecs = 0; // Reset to let average grow again from start
+            }
         }
     }
 

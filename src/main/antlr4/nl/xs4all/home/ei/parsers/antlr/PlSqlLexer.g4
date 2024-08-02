@@ -63,7 +63,7 @@ fragment Y: [yY];
 fragment Z: [zZ];
 
 
-
+A_                             : A;
 ABORT                          : A B O R T;
 ABS                            : A B S;
 ABSENT                         : A B S E N T;
@@ -505,6 +505,7 @@ DV                             : D V;
 DYNAMIC                        : D Y N A M I C;
 DYNAMIC_SAMPLING               : D Y N A M I C '_' S A M P L I N G;
 DYNAMIC_SAMPLING_EST_CDN       : D Y N A M I C '_' S A M P L I N G '_' E S T '_' C D N;
+E_                             : E;
 EACH                           : E A C H;
 EDITIONABLE                    : E D I T I O N A B L E;
 EDITION                        : E D I T I O N;
@@ -650,6 +651,7 @@ FULL_OUTER_JOIN_TO_OUTER       : F U L L '_' O U T E R '_' J O I N '_' T O '_' O
 FUNCTION                       : F U N C T I O N;
 FUNCTIONS                      : F U N C T I O N S;
 FTP                            : F T P;
+G_                             : G;
 GATHER_OPTIMIZER_STATISTICS    : G A T H E R '_' O P T I M I Z E R '_' S T A T I S T I C S;
 GATHER_PLAN_STATISTICS         : G A T H E R '_' P L A N '_' S T A T I S T I C S;
 GBY_CONC_ROLLUP                : G B Y '_' C O N C '_' R O L L U P;
@@ -671,6 +673,7 @@ GROUPS                         : G R O U P S;
 GUARANTEED                     : G U A R A N T E E D;
 GUARANTEE                      : G U A R A N T E E;
 GUARD                          : G U A R D;
+H_                             : H;
 HALF_YEARS                     : H A L F '_' Y E A R S;
 HASH_AJ                        : H A S H '_' A J;
 HASH                           : H A S H;
@@ -819,6 +822,7 @@ JSON_TEXTCONTAINS2             : J S O N '_' T E X T C O N T A I N S '2';
 JSON_TEXTCONTAINS              : J S O N '_' T E X T C O N T A I N S;
 JSON_TRANSFORM                 : J S O N '_' T R A N S F O R M;
 JSON_VALUE                     : J S O N '_' V A L U E;
+K_                             : K;
 KEEP_DUPLICATES                : K E E P '_' D U P L I C A T E S;
 KEEP                           : K E E P;
 KERBEROS                       : K E R B E R O S;
@@ -900,6 +904,7 @@ LOWER                          : L O W E R;
 LOW                            : L O W;
 LPAD                           : L P A D;
 LTRIM                          : L T R I M;
+M_                             : M;
 MAIN                           : M A I N;
 MAKE_REF                       : M A K E '_' R E F;
 MANAGED                        : M A N A G E D;
@@ -1171,6 +1176,7 @@ NO_ROOT_SW_FOR_LOCAL           : N O '_' R O O T '_' S W '_' F O R '_' L O C A L
 NOROWDEPENDENCIES              : N O R O W D E P E N D E N C I E S;
 NOSCHEMACHECK                  : N O S C H E M A C H E C K;
 NOSEGMENT                      : N O S E G M E N T;
+NOSCALE                        : N O S C A L E;
 NO_SEMIJOIN                    : N O '_' S E M I J O I N;
 NO_SEMI_TO_INNER               : N O '_' S E M I '_' T O '_' I N N E R;
 NO_SET_TO_JOIN                 : N O '_' S E T '_' T O '_' J O I N;
@@ -1435,6 +1441,7 @@ PRIVATE_SGA                    : P R I V A T E '_' S G A;
 PRIVILEGED                     : P R I V I L E G E D;
 PRIVILEGE                      : P R I V I L E G E;
 PRIVILEGES                     : P R I V I L E G E S;
+PROMPT                         : P R O M P T?;
 PROCEDURAL                     : P R O C E D U R A L;
 PROCEDURE                      : P R O C E D U R E;
 PROCESS                        : P R O C E S S;
@@ -2043,6 +2050,7 @@ SYS_XQXFORM                    : S Y S '_' X Q X F O R M;
 SYS_XSID_TO_RAW                : S Y S '_' X S I D '_' T O '_' R A W;
 SYS_ZMAP_FILTER                : S Y S '_' Z M A P '_' F I L T E R;
 SYS_ZMAP_REFRESH               : S Y S '_' Z M A P '_' R E F R E S H;
+T_                             : T;
 TABLE_LOOKUP_BY_NL             : T A B L E '_' L O O K U P '_' B Y '_' N L;
 TABLESPACE_NO                  : T A B L E S P A C E '_' N O;
 TABLESPACE                     : T A B L E S P A C E;
@@ -2314,6 +2322,7 @@ YES                            : Y E S;
 YMINTERVAL_UNCONSTRAINED       : Y M I N T E R V A L '_' U N C O N S T R A I N E D;
 ZONEMAP                        : Z O N E M A P;
 ZONE                           : Z O N E;
+P_                             : P;
 PREDICTION                     : P R E D I C T I O N;
 PREDICTION_BOUNDS              : P R E D I C T I O N '_' B O U N D S;
 PREDICTION_COST                : P R E D I C T I O N '_' C O S T;
@@ -2432,24 +2441,6 @@ APPROXIMATE_NUM_LIT : FLOAT_FRAGMENT (E ('+' | '-')? (FLOAT_FRAGMENT | [0-9]+))?
 // and a superfluous subtoken typecasting of the "QUOTE"
 CHAR_STRING: '\'' (~('\'' | '\r' | '\n') | '\'' '\'' | NEWLINE)* '\'';
 
-// See https://livesql.oracle.com/apex/livesql/file/content_CIREYU9EA54EOKQ7LAMZKRF6P.html
-// TODO: context sensitive string quotes (any characted after quote)
-CHAR_STRING_PERL:
-    Q '\'' (
-        QS_ANGLE
-        | QS_BRACE
-        | QS_BRACK
-        | QS_PAREN
-        | QS_EXCLAM
-        | QS_SHARP
-        | QS_QUOTE
-        | QS_DQUOTE
-        | QS_TILDA
-        | QS_SOLIDUS
-        | QS_RSOLIDUS
-        | QS_CARET
-    ) '\'' -> type(CHAR_STRING)
-;
 fragment QS_ANGLE    : '<' .*? '>';
 fragment QS_BRACE    : '{' .*? '}';
 fragment QS_BRACK    : '[' .*? ']';
@@ -2462,6 +2453,25 @@ fragment QS_TILDA    : '~' .*? '~';
 fragment QS_SOLIDUS  : '/' .*? '/';
 fragment QS_RSOLIDUS : '\\' .*? '\\';
 fragment QS_CARET    : '^' .*? '^';
+
+// See https://livesql.oracle.com/apex/livesql/file/content_CIREYU9EA54EOKQ7LAMZKRF6P.html
+// TODO: context sensitive string quotes (any characted after quote)
+CHAR_STRING_PERL
+    : Q '\'' (
+        QS_ANGLE
+        | QS_BRACE
+        | QS_BRACK
+        | QS_PAREN
+        | QS_EXCLAM
+        | QS_SHARP
+        | QS_QUOTE
+        | QS_DQUOTE
+        | QS_TILDA
+        | QS_SOLIDUS
+        | QS_RSOLIDUS
+        | QS_CARET
+    ) '\'' /* -> type(CHAR_STRING) */
+;
 
 DELIMITED_ID: '"' (~ [\u0000"] | '"' '"')+ '"';
 
@@ -2478,7 +2488,6 @@ SOLIDUS         : '/';
 AT_SIGN         : '@';
 ASSIGN_OP       : ':=';
 HASH_OP         : '#';
-
 SQ: '\'';
 
 BINDVAR:
@@ -2515,22 +2524,26 @@ REMARK_COMMENT:
 ;
 
 // https://docs.oracle.com/cd/E11882_01/server.112/e16604/ch_twelve032.htm#SQPUG052
-PROMPT_MESSAGE: 'PRO' /* {this.IsNewlineAtPos(-4)}? */ 'MPT'? (' ' ~('\r' | '\n')*)? NEWLINE_EOF;
+PROMPT_MESSAGE: PROMPT (' ' ~('\r' | '\n')*)? ;
+// NEWLINE_EOF;
 
 // TODO: should starts with newline
 START_CMD: // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12002.htm
     '@' '@'?
 ; // https://docs.oracle.com/cd/B19306_01/server.102/b14357/ch12003.htm
 
-REGULAR_ID: SIMPLE_LETTER (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*;
+// Jurgen Added _ as start letter
+REGULAR_ID: (SIMPLE_LETTER | '_') (SIMPLE_LETTER | '$' | '_' | '#' | [0-9])*;
 
 INQUIRY_DIRECTIVE: '$$' (SIMPLE_LETTER | '_')+;
 
 SPACES: [ \t\r\n]+ -> channel(HIDDEN);
 
 // Jurgen
+// TODO: change conditional macro walker
 // hide whole conditional block from being parsed
 // jurgen added conditional compile
+
 
 fragment DOLLAR_ELSE                    : '$' E L S E;
 fragment DOLLAR_ELSIF                   : '$' E L S I F;
