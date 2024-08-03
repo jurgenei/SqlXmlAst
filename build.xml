@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." name="xml2json" default="all">
+<project basedir="." name="antlr4 utils" default="all">
 <!--
   20210529 Jurgen Hildebrand (ei@xs4all.nl)
       example sqlxmlast/xslt3
@@ -12,20 +12,49 @@
     <!--
     Tasks
     -->
-    <!-- run all tasks sequentially -->
-    <target name="all" depends="sqlxmlast-to-xml,xmlsqlast-shorten,xmlsqlast-json-structure,json-structure-to-json"/>
+    <target name="all"/>
     <!-- convert misc formats to XML AST -->
-    <target name="sqlxmlast-to-xml">
-        <sqlxmlast grammar="oracle" extension=".xml" basedir="examples/plsql" destdir="target/sqlxmlast/plsql"/>
-        <sqlxmlast grammar="sybase" extension=".xml" basedir="examples/tsql" destdir="target/sqlxmlast/tsql"/>
-        <sqlxmlast grammar="antlr4" extension=".xml" basedir="examples/antlr4" destdir="target/sqlxmlast/antlr4"/>
-        <sqlxmlast grammar="java8" extension=".xml" basedir="examples/java8" destdir="target/sqlxmlast/java8"/>
+    <target name="gs">
+        <xslt basedir="target/grammars-ast" destdir="target/grammars-simplified"
+              style="src/main/stylesheets/grammar-simplify.xsl"
+              extension=".xml">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="saxon.cp"/>
+            <include name="*.xml"/>
+        </xslt>
     </target>
-    <!-- make XML compacter form -->
+    <target name="ss">
+        <xslt basedir="target/grammars-simplified" destdir="target/convert-simplified"
+              style="src/main/stylesheets/convert-simplify.xsl"
+              extension=".xslt">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="saxon.cp"/>
+            <include name="PlSqlParser.xml"/>
+        </xslt>
+    </target>
+    <target name="sx">
+        <xslt basedir="target/sqlxmlast/plsql" destdir="target/sqlxmlast/plsql-simplified"
+              style="target/convert-simplified/PlSqlParser.xslt"
+              extension=".xml">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="saxon.cp"/>
+            <include name="*.xml"/>
+        </xslt>
+    </target>
+    <target name="sj">
+        <xslt basedir="target/sqlxmlast/plsql" destdir="target/sqlxmlast/plsql-shorten"
+              style="src/main/stylesheets/sqlxmlast-shorten.xsl"
+              extension=".xml">
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
+            <classpath refid="saxon.cp"/>
+            <include name="*.xml"/>
+        </xslt>
+    </target>
     <target name="xmlsqlast-shorten">
         <doxslt extension=".xml" basedir="target/sqlxmlast" destdir="target/sqlxmlshort"
-              style="src/main/stylesheets/sqlxmlast-shorten.xsl"/>
+                style="src/main/stylesheets/sqlxmlast-shorten.xsl"/>
     </target>
+    <!-- make XML compacter form -->
     <!-- make prepare JSON conversion by translation of
          generic XML elements/attrs into object, array and string types elements -->
     <target name="xmlsqlast-json-structure">
@@ -64,4 +93,5 @@
             <zipfileset dir="src/main/stylesheets" prefix="xslt"/>
         </zip>
     </target>
+
 </project>

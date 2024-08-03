@@ -146,7 +146,11 @@ ruleSpec
    ;
 
 parserRuleSpec
-   : ruleModifiers? RULE_REF argActionBlock? ruleReturns? throwsSpec? localsSpec? rulePrequel* COLON ruleBlock SEMI exceptionGroup
+   : ruleModifiers? ruleDef argActionBlock? ruleReturns? throwsSpec? localsSpec? rulePrequel* COLON ruleBlock SEMI exceptionGroup
+   ;
+
+ruleDef
+   : RULE_REF
    ;
 
 exceptionGroup
@@ -217,7 +221,11 @@ labeledAlt
    // Lexer rules
 
 lexerRuleSpec
-   : FRAGMENT? TOKEN_REF COLON lexerRuleBlock SEMI
+   : FRAGMENT? tokenDef COLON lexerRuleBlock SEMI
+   ;
+
+tokenDef
+   : TOKEN_REF
    ;
 
 lexerRuleBlock
@@ -288,8 +296,8 @@ alternative
    ;
 
 element
-   : labeledElement (ebnfSuffix |)
-   | atom (ebnfSuffix |)
+   : labeledElement ebnfSuffix?
+   | atom ebnfSuffix?
    | ebnf
    | actionBlock QUESTION?
    ;
