@@ -2489,6 +2489,7 @@ AT_SIGN         : '@';
 ASSIGN_OP       : ':=';
 HASH_OP         : '#';
 SQ: '\'';
+CONCAT_OP       : '||';
 
 BINDVAR:
     ':' SIMPLE_LETTER (SIMPLE_LETTER | [0-9] | '_')*
@@ -2497,7 +2498,9 @@ BINDVAR:
     | QUESTION_MARK // not in SQL, not in Oracle, not in OCI, use this for JDBC
 ;
 
-NOT_EQUAL_OP              : '!=' | '<>' | '^=' | '~=';
+ARROW_OP                  : '=>';
+EQUALS_OP                 : '=';
+NOT_EQUAL_OP              : '!=' | '<>' | '^=' | '~=' | '>=' | '<=';
 CARRET_OPERATOR_PART      : '^';
 TILDE_OPERATOR_PART       : '~';
 EXCLAMATION_OPERATOR_PART : '!';
@@ -2505,14 +2508,10 @@ GREATER_THAN_OP           : '>';
 LESS_THAN_OP              : '<';
 COLON                     : ':';
 SEMICOLON                 : ';';
-
-BAR       : '|';
-EQUALS_OP : '=';
-
-LEFT_BRACKET  : '[';
-RIGHT_BRACKET : ']';
-
-INTRODUCER: '_';
+BAR                       : '|';
+LEFT_BRACKET              : '[';
+RIGHT_BRACKET             : ']';
+INTRODUCER                : '_';
 
 // Comments https://docs.oracle.com/cd/E11882_01/server.112/e41084/sql_elements006.htm
 

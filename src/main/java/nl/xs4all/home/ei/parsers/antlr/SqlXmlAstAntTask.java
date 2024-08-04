@@ -19,6 +19,15 @@ import org.apache.tools.ant.util.FileNameMapper;
  */
 
 public class SqlXmlAstAntTask extends MatchingTask {
+
+    private static int instanceCount = 0;
+
+    private synchronized int incInstanceCount() {
+        return ++instanceCount;
+    }
+    private synchronized int decInstanceCount() {
+        return --instanceCount;
+    }
     /**
      * destination directory
      */
@@ -332,6 +341,8 @@ public class SqlXmlAstAntTask extends MatchingTask {
         String[] list;
         String[] dirs;
 
+
+
         if (inFile != null && !inFile.exists()) {
             handleError("input file " + inFile + " does not exist");
             return;
@@ -355,6 +366,7 @@ public class SqlXmlAstAntTask extends MatchingTask {
                 scanner = getDirectoryScanner(baseDir);
                 log("Transforming into " + destDir, Project.MSG_INFO);
 
+                incInstanceCount();
                 // Process all the files marked for styling
                 list = scanner.getIncludedFiles();
                 for (int i = 0; i < list.length; ++i) {
@@ -369,6 +381,10 @@ public class SqlXmlAstAntTask extends MatchingTask {
                             process(baseDir, dirs[j] + File.separator + list[i], destDir);
                         }
                     }
+                }
+                if (decInstanceCount() == 0) {
+                    log("CLEAR DFA END", Project.MSG_INFO);
+                    converter.clearDFA();
                 }
             } else { // only resource collections, there better be some
                 if (resources.size() == 0) {

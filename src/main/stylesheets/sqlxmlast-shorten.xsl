@@ -87,6 +87,19 @@
         <xsl:param name="node"/>
         <xsl:param name="path"/>
         <xsl:choose>
+            <xsl:when test="$node/self::t:*">
+                <t:t>{$node/self::t:*}</t:t>
+            </xsl:when>
+            <xsl:when test="$node/self::g:regular_id or $node/self::g:quoted_string">
+                <xsl:map>
+                    <xsl:map-entry key="'path'" select="$path"/>
+                    <xsl:map-entry key="'node'">
+                        <xsl:copy select="$node">
+                            <xsl:sequence select="string(.//t:*)"/>
+                        </xsl:copy>
+                    </xsl:map-entry>
+                </xsl:map>
+            </xsl:when>
             <xsl:when test="count($node/g:*) = 1 and not($node/t:*)">
                 <xsl:sequence select="fn:wrap($node/(g:*,comment()),($path, local-name($node)))"/>
             </xsl:when>
@@ -94,79 +107,89 @@
                 <xsl:map>
                     <xsl:map-entry key="'path'" select="$path"/>
                     <xsl:map-entry key="'node'">
-
-                        <xsl:for-each-group select="$node/node()" group-adjacent="fn:group-key(.)">
-                            <xsl:variable name="key" select="current-grouping-key()"/>
-                            <xsl:variable name="content">
-                                <xsl:apply-templates select="current-group()"/>
-                            </xsl:variable>
-                            <!--
-                            <xsl:comment>start {$namespace-uri}</xsl:comment>
-                            -->
-                            <xsl:choose>
-                                <xsl:when test="$key = 'urn:xmlast:token'">
-                                    <xsl:variable name="val"
-                                                  select="string-join(fn:normalize-tokens(current-group()),'')"/>
-                                    <xsl:variable name="name" select="string-join(current-group()/local-name(),',')"/>
-                                    <t:t>
-                                        <xsl:choose>
-                                            <xsl:when test="$name ne $content">
-                                                <xsl:attribute name="type" select="$name"/>
-                                            </xsl:when>
-                                        </xsl:choose>
-                                        <xsl:attribute name="val" select="$val"/>
-                                        <xsl:value-of select="$content"/>
-                                    </t:t>
-                                </xsl:when>
-                                <xsl:when test="$key = 'sequence'">
-                                    <xsl:variable name="val"
-                                                  select="string-join(fn:normalize-tokens(current-group()),'')"/>
-                                    <xsl:variable name="type" select="string-join(current-group()/self::t:*/local-name(),',')"/>
-                                    <xsl:choose>
-                                        <xsl:when test="$type = ('EQUALS_OP','PERIOD','COMMA','ASSIGN_OP','SEMICOLON','LEFT_PAREN','RIGHT_PAREN','IN','DEFAULT','NULL')">
-                                           <t:t>{normalize-space($content)}</t:t>
-                                        </xsl:when>
-                                        <xsl:when test="$type ne ''">
-                                            <xsl:element name="{if ($type = 'WS') then 'c:ws' else 't:ts'}">
-                                                <xsl:choose>
-                                                    <xsl:when test="$type ne $content">
-                                                        <xsl:attribute name="type" select="$type"/>
-                                                    </xsl:when>
-                                                </xsl:choose>
-                                                <xsl:choose>
-                                                    <xsl:when test="$val ne ''">
-                                                        <xsl:attribute name="val" select="$val"/>
-                                                    </xsl:when>
-                                                </xsl:choose>
-                                                <xsl:value-of select="normalize-space($content)"/>
-                                            </xsl:element>
-                                        </xsl:when>
-                                    </xsl:choose>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:sequence select="$content"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            <!--
-                            <xsl:comment>end {$namespace-uri}</xsl:comment>
-                            -->
-                        </xsl:for-each-group>
-                        <!--
                         <xsl:apply-templates select="$node/node()"/>
-                        -->
                     </xsl:map-entry>
                 </xsl:map>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
 
+    <xsl:template match="t:*">
+        <t:t>
+            <xsl:value-of select="."/>
+        </t:t>
+    </xsl:template>
+    <!--
+                           <xsl:for-each-group select="$node/node()" group-adjacent="fn:group-key(.)">
+                               <xsl:variable name="key" select="current-grouping-key()"/>
+                               <xsl:variable name="content">
+                                   <xsl:apply-templates select="current-group()"/>
+                               </xsl:variable>
+                               <xsl:choose>
+                                   <xsl:when test="$key = 'urn:xmlast:token'">
+                                       <xsl:variable name="val"
+                                                     select="string-join(fn:normalize-tokens(current-group()),'')"/>
+                                       <xsl:variable name="name" select="string-join(current-group()/local-name(),',')"/>
+                                       <t:t>
+                                           <xsl:choose>
+                                               <xsl:when test="$name ne $content">
+                                                   <xsl:attribute name="type" select="$name"/>
+                                               </xsl:when>
+                                           </xsl:choose>
+                                           <xsl:attribute name="val" select="$val"/>
+                                           <xsl:value-of select="$content"/>
+                                       </t:t>
+                                   </xsl:when>
+                                   <xsl:when test="$key = 'sequence'">
+                                       <xsl:choose>
+                                           <xsl:when test="t:*">
+
+                                           </xsl:when>
+                                       </xsl:choose>
+                                       <g>
+                                           <xsl:apply-templates select="current-group()"/>
+                                       </g>
+
+                                       <xsl:variable name="val"
+                                                     select="string-join(fn:normalize-tokens(current-group()),'')"/>
+                                       <xsl:variable name="type" select="string-join(current-group()/self::t:*/local-name(),',')"/>
+                                       <xsl:choose>
+                                           <xsl:when test="$type = ('EQUALS_OP','PERIOD','COMMA','ASSIGN_OP','SEMICOLON','LEFT_PAREN','RIGHT_PAREN','IN','DEFAULT','NULL')">
+                                              <t:t>{normalize-space($content)}</t:t>
+                                           </xsl:when>
+                                           <xsl:when test="$type ne ''">
+                                               <xsl:element name="{if ($type = 'WS') then 'c:ws' else 't:ts'}">
+                                                   <xsl:choose>
+                                                       <xsl:when test="$type ne $content">
+                                                           <xsl:attribute name="type" select="$type"/>
+                                                       </xsl:when>
+                                                   </xsl:choose>
+                                                   <xsl:choose>
+                                                       <xsl:when test="$val ne ''">
+                                                           <xsl:attribute name="val" select="$val"/>
+                                                       </xsl:when>
+                                                   </xsl:choose>
+                                                   <xsl:value-of select="normalize-space($content)"/>
+                                               </xsl:element>
+                                           </xsl:when>
+                                       </xsl:choose>
+
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       <xsl:sequence select="$content"/>
+                                   </xsl:otherwise>
+                               </xsl:choose>
+           -->
     <xsl:function name="fn:group-key">
         <xsl:param name="node"/>
         <xsl:choose>
+            <xsl:when test="$node/self::g:regular_id">regular_id</xsl:when>
+            <xsl:when test="$node/(self::t:LEFT_PAREN|self::t:RIGHT_PAREN)">paren</xsl:when>
             <xsl:when test="$node/self::c:WS or $node/self::t:*">sequence</xsl:when>
             <xsl:otherwise>{namespace-uri($node)}</xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+
 
     <xsl:function name="fn:normalize-tokens">
         <xsl:param name="tokens"/>
@@ -210,4 +233,3 @@
     </xsl:template>
 
 </xsl:stylesheet>
-

@@ -45,7 +45,9 @@ public class SqlXmlConverter {
     }
 
     public void clearDFA() {
-        xmlAstWriter.clearDFA();
+        if (xmlAstWriter != null) {
+            xmlAstWriter.clearDFA();
+        }
     }
 
     private void ensureDirectoryFor(final File targetFile) throws Exception {
