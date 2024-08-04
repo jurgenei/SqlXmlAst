@@ -1,6 +1,5 @@
 # SqlXmlAst toolkit
 
-[![Travis Status](https://api.travis-ci.com/jurgenei/SqlXmlAst.png)](https://app.travis-ci.com/github/jurgenei/SqlXmlAst)
 
 SqlXmlAst is a toolkit to parse Oracle and Sybase SQL and generate 
 Abstact Syntax Trees (in short AST) in XML.

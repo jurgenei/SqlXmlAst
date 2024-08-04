@@ -1,6 +1,0 @@
-language: java 
-jdk:
-  - openjdk8 
-sudo: required
-
-install: true
