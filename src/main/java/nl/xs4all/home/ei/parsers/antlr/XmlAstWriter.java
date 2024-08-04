@@ -21,9 +21,9 @@ public class XmlAstWriter {
     private String tokenNS = "urn:xmlast:token";
     private final String grammar;
 
-    private Class<Parser> parserClass;
-    private Class<Lexer> lexerClass;
-    private Class<ParseTreeListener> listenerClass;
+    private final Class<Parser> parserClass;
+    private final Class<Lexer> lexerClass;
+    private final Class<ParseTreeListener> listenerClass;
 
     private XMLStreamWriter xmlStreamWriter;
     private List<String> ruleNames;
@@ -107,37 +107,22 @@ public class XmlAstWriter {
         final InputStream inputStream = new FileInputStream(inFile);
         final CharStream s = CharStreams.fromStream(inputStream);
 
-
-
-        // try garbage collect to prevent clogging the heap
-        // when converting many files we are running
-        // out of memory, gc/sleep is a try to prevent this
-        /*
-        System.gc();
-        Thread.sleep(100);
-        */
-
         lexer = lexerClass.getDeclaredConstructor(CharStream.class).newInstance(s);
-
         tokenStream = new CommonTokenStream(lexer);
-
         parser = parserClass.getDeclaredConstructor(TokenStream.class).newInstance(tokenStream);
-
-        parser.setBuildParseTree(false);
-
-
 
         parser.setErrorHandler(new BailErrorStrategy());
         ruleNames = Arrays.asList(parser.getRuleNames());
+        String firstRuleName = ruleNames.get(0);
+
         final XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
 
         OutputStream os = new ByteArrayOutputStream();
         xmlStreamWriter = new IndentingXMLStreamWriter(xmlof.createXMLStreamWriter(os, "UTF-8"));
 
         final ParseTreeListener writer = listenerClass.getDeclaredConstructor(XmlAstWriter.class).newInstance(this);
-        // Preserve memory
-        // parser.setBuildParseTree(false);
-        // convert
+
+
         xmlStreamWriter.writeStartDocument("UTF-8", "1.0");
         xmlStreamWriter.writeStartElement("ast"); // document element
         xmlStreamWriter.writeDefaultNamespace(grammarNS);
@@ -147,7 +132,7 @@ public class XmlAstWriter {
         xmlStreamWriter.writeAttribute("path", path.replaceAll("\\\\", "/"));
         xmlStreamWriter.writeAttribute("numlines", Integer.toString(countLines(inFile)));
         final ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(writer, (ParseTree) (parserClass.getMethod("script")).invoke(parser));
+        walker.walk(writer, (ParseTree) (parserClass.getMethod(firstRuleName)).invoke(parser));
         flushKeepSpace();
         xmlStreamWriter.writeEndElement();
         xmlStreamWriter.writeEndDocument();
@@ -177,8 +162,6 @@ public class XmlAstWriter {
         String ruleName;
         if (ruleIndex >= 0 && ruleIndex < ruleNames.size()) {
             ruleName = ruleNames.get(ruleIndex);
-            // .replace('_', '-'); -> not doing this Jurgen,
-            // Makes it harder to convert XML2JSON
         } else {
             ruleName = "rule-" + ruleIndex;
         }
