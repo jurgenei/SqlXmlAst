@@ -20,21 +20,16 @@ public class XmlAstWriter {
     private String grammarNS = "urn:xmlast:grammar";
     private String tokenNS = "urn:xmlast:token";
     private final String grammar;
-
     private final Class<Parser> parserClass;
     private final Class<Lexer> lexerClass;
     private final Class<ParseTreeListener> listenerClass;
-
     private XMLStreamWriter xmlStreamWriter;
     private List<String> ruleNames;
-
     private final List<String> ruleStack;
     private CommonTokenStream tokenStream;
     private final HashMap<Integer, Boolean> booleanHashMap;
-
     private Lexer lexer;
     private Parser parser;
-
     private String keepSpace;
 
     // the casts are checked!
