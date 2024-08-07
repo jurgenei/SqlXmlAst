@@ -29,43 +29,11 @@ options {
 //    superClass = PlSqlParserBase;
 }
 
-//@parser::postinclude {
-//#include <PlSqlParserBase.h>
-//}
-
-/*
-script
-    : sql_plus_command_no_semicolon? (
-        (sql_plus_command | unit_statement) (SEMICOLON SOLIDUS? (sql_plus_command | unit_statement))* SEMICOLON? SOLIDUS?
-    ) EOF? // Jurgen
-    ;
-
-script
-    : sql_plus_command? (
-        (sql_plus_command | unit_statement) (SEMICOLON SOLIDUS? (sql_plus_command | unit_statement))* SEMICOLON? SOLIDUS?
-    ) EOF
-    ;
-*/
-
-/*
-script
-    : script_bits* EOF
-    ;
-
-script_bits
-    : unit_statement
-    | sql_plus_command
-    | SOLIDUS
-    | SEMICOLON
-    ;
-*/
-
-
 script
     : (
         (sql_plus_command | unit_statement)
         (SEMICOLON? SOLIDUS* (sql_plus_command | unit_statement))* SEMICOLON? SOLIDUS*
-    ) EOF // Jurgen
+    ) EOF
     ;
 
 unit_statement
@@ -2751,7 +2719,7 @@ alter_view
 
 // https://docs.oracle.com/en/database/oracle/oracle-database/21/sqlrf/CREATE-VIEW.html
 create_view
-    : CREATE (OR REPLACE)? (NO? FORCE)? editioning_clause? VIEW (schema_name PERIOD)? v = id_expression (
+    : CREATE (OR REPLACE)? (NO? FORCE)? editioning_clause? VIEW (schema_name PERIOD)? view_name (
         IF NOT EXISTS
     )? (SHARING EQUALS_OP (METADATA | EXTENDED? DATA | NONE))? view_options? (
         DEFAULT COLLATION cn = id_expression
@@ -2759,6 +2727,10 @@ create_view
         CONTAINER_MAP
         | CONTAINERS_DEFAULT
     )?
+    ;
+
+view_name
+    : id_expression
     ;
 
 editioning_clause
@@ -5977,11 +5949,6 @@ add_calc_meas_clause
 subquery
     : subquery_basic_elements subquery_operation_part*
     ;
-
-//subquery_basic_elements
-//    : query_block
-//    | LEFT_PAREN subquery RIGHT_PAREN
-//    ;
 
 subquery_basic_elements
     : query_block

@@ -66,7 +66,13 @@
     </xsl:template>
 
     <!-- wrap elements with a single child to compress ast -->
-    <xsl:template match="g:*">
+    <xsl:template match="g:unit_statement" priority="100">
+        <xsl:copy>
+            <xsl:apply-templates select="g:*|comment()"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="g:*[count(g:*) = 1]">
         <xsl:variable name="wrapped" select="fn:wrap(.,())" as="map(*)"/>
         <xsl:variable name="path-comps" select="$wrapped('path')[position() ne 1]"/>
         <xsl:variable name="path" select="string-join($path-comps,'/')"/>
@@ -120,8 +126,13 @@ Decode whitespace, for later
             <xsl:apply-templates/>
         </q>
     </xsl:template>
-    <xsl:template match="g:regular_id/t:*" priority="100">
+    <xsl:template match="g:regular_id//t:*" priority="100">
         <i val="{lower-case(.)}">
+            <xsl:value-of select="."/>
+        </i>
+    </xsl:template>
+    <xsl:template match="t:DELIMITED_ID" priority="80">
+        <i val="{lower-case(replace(.,$delim_str_re,'$1'))}">
             <xsl:value-of select="."/>
         </i>
     </xsl:template>
@@ -135,11 +146,7 @@ Decode whitespace, for later
             <xsl:value-of select="."/>
         </b>
     </xsl:template>
-    <xsl:template match="t:DELIMITED_ID" priority="80">
-        <b val="{lower-case(replace(.,$delim_str_re,'$1'))}">
-            <xsl:value-of select="."/>
-        </b>
-    </xsl:template>
+
     <xsl:template match="constant//t:*" priority="60">
         <b val="{.}">
             <xsl:value-of select="."/>
