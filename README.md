@@ -1,5 +1,6 @@
 # SqlXmlAst toolkit
 
+![example workflow](https://github.com/jurgenei/SqlXmlAst/actions/workflows/maven.yml/badge.svg)
 
 SqlXmlAst is a toolkit to parse Oracle PlSql and generate 
 Abstract Syntax Trees in XML.
