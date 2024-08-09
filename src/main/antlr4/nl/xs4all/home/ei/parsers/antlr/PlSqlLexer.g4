@@ -2500,7 +2500,7 @@ BINDVAR:
 
 ARROW_OP                  : '=>';
 EQUALS_OP                 : '=';
-NOT_EQUAL_OP              : '!=' | '<>' | '^=' | '~=' | '>=' | '<=';
+NOT_EQUAL_OP              : '!=' | ('<' SPACE* '>') | ('^' SPACE* '=') | ('~' SPACE* '=') | ('>' SPACE* '=') | ('<' SPACE* '=');
 CARRET_OPERATOR_PART      : '^';
 TILDE_OPERATOR_PART       : '~';
 EXCLAMATION_OPERATOR_PART : '!';
